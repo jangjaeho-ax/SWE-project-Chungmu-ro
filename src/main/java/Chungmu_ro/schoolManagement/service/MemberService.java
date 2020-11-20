@@ -3,11 +3,9 @@ package Chungmu_ro.schoolManagement.service;
 import Chungmu_ro.schoolManagement.domain.Member;
 import Chungmu_ro.schoolManagement.domain.Professor;
 import Chungmu_ro.schoolManagement.domain.Student;
-import Chungmu_ro.schoolManagement.repository.MemberRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
 import java.util.Optional;
 
 @Service

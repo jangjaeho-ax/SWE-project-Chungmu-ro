@@ -29,6 +29,11 @@ public class Attendance {
         return enlist;
     }
 
+    public void setEnlist(Enlist enlist) {
+        this.enlist = enlist;
+        enlist.getAttendanceList().add(this);
+    }
+
     public LocalDateTime getDate() {
         return date;
     }
@@ -46,6 +51,10 @@ public class Attendance {
     }
 
     public Attendance() {
+    }
+
+    public Attendance(Long aid) {
+        Aid = aid;
     }
 
     public Attendance(Long aid, Enlist enlist, LocalDateTime date, AttendanceStatus attendanceStatus) {

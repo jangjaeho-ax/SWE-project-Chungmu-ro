@@ -19,7 +19,7 @@ public class Assignment {
     @JoinColumn(name = "CourseID")
     private Course course;
 
-    @OneToMany(mappedBy = "assignment",fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "assignment",fetch = FetchType.LAZY)//mappedBy는 가짜 맴버로 이 맴버로 수정을 할 수 없다.
     private List<Grade>  gradeList =new ArrayList<>();
 
     @Column(name = "AssignmentTitle")
@@ -46,7 +46,9 @@ public class Assignment {
     }
 
     public void setCourse(Course course) {
+
         this.course = course;
+        course.getAssignmentList().add(this);
     }
 
     public String getTitle() {

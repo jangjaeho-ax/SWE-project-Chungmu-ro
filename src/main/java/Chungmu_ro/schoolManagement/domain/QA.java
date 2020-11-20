@@ -37,6 +37,21 @@ public class QA {
         return professor;
     }
 
+    public void setStudent(Student student) {
+        this.student = student;
+        student.getQaList().add(this);
+    }
+
+    public void setCourse(Course course) {
+        this.course = course;
+        course.getQaList().add(this);
+    }
+
+    public void setProfessor(Professor professor) {
+        this.professor = professor;
+        professor.getQaList().add(this);
+    }
+
     public QA() {
     }
 

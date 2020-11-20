@@ -33,7 +33,9 @@ public class Enlist {
     }
 
     public void setStudent(Student student) {
+
         this.student = student;
+        student.getEnlistList().add(this);
     }
 
     public Course getCourse() {
@@ -41,7 +43,9 @@ public class Enlist {
     }
 
     public void setCourse(Course course) {
+
         this.course = course;
+        course.getEnlistList().add(this);
     }
 
     public List<Attendance> getAttendanceList() {

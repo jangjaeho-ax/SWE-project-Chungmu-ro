@@ -1,15 +1,9 @@
 package Chungmu_ro.schoolManagement;
 
-import Chungmu_ro.schoolManagement.domain.Student;
-import Chungmu_ro.schoolManagement.repository.JpaMemberRepository;
 import Chungmu_ro.schoolManagement.repository.JpaStudentRepository;
-import Chungmu_ro.schoolManagement.repository.MemberRepository;
-import Chungmu_ro.schoolManagement.repository.StudentRepository;
-import Chungmu_ro.schoolManagement.service.MemberService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.data.jpa.repository.JpaRepository;
 
 import javax.persistence.EntityManager;
 

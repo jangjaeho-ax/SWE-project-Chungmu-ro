@@ -43,6 +43,7 @@ public class Course {
 
     public void setProfessor(Professor professor) {
         this.professor = professor;
+        professor.getCourseList().add(this);
     }
 
     public List<Enlist> getEnlistList() {

@@ -1,15 +1,9 @@
 package Chungmu_ro.schoolManagement.service;
 
-import Chungmu_ro.schoolManagement.domain.Student;
-import Chungmu_ro.schoolManagement.repository.AssignmentRepository;
-import Chungmu_ro.schoolManagement.repository.AttendanceRepository;
-import Chungmu_ro.schoolManagement.repository.CourseRepository;
-import Chungmu_ro.schoolManagement.repository.GradeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityTransaction;
-import java.util.Optional;
 
 @Service
 public class StudentService {

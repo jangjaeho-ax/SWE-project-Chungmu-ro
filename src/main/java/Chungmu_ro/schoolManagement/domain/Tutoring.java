@@ -38,7 +38,9 @@ public class Tutoring {
     }
 
     public void setStudent(Student student) {
+
         this.student = student;
+        student.getTutoringList().add(this);
     }
 
     public Professor getProfessor() {
@@ -47,6 +49,7 @@ public class Tutoring {
 
     public void setProfessor(Professor professor) {
         this.professor = professor;
+        professor.getTutoringList().add(this);
     }
 
     public LocalDateTime getStartTime() {

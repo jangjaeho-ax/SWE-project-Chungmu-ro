@@ -35,6 +35,7 @@ public class Grade {
 
     public void setAssignment(Assignment assignment) {
         this.assignment = assignment;
+        assignment.getGradeList().add(this);
     }
 
     public Enlist getEnlist() {
@@ -42,7 +43,9 @@ public class Grade {
     }
 
     public void setEnlist(Enlist enlist) {
+
         this.enlist = enlist;
+        enlist.getGradeList().add(this);
     }
 
     public Integer getScore() {
