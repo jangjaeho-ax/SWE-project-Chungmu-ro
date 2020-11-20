@@ -1,6 +1,7 @@
 package Chungmu_ro.schoolManagement.repository;
 
 import Chungmu_ro.schoolManagement.domain.Student;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
@@ -16,11 +17,10 @@ public class StudentRepository {
 
     public void save(Student student){
         em.persist(student);
-
     }
 
-    public Student findBySid(int sid){
-        return em.find(Student.class, sid);
+    public Optional<Student> findBySid(int sid){
+        return Optional.ofNullable(em.find(Student.class, sid));
 
     }
     public List<Student> findAll(){
@@ -31,5 +31,9 @@ public class StudentRepository {
         return  em.createQuery("select s from Student s where s.AccountId =:AccountId",Student.class)
                 .setParameter("AccountId",AccountId)
                 .getResultList().stream().findAny();
+    }
+    @Autowired
+    public StudentRepository(EntityManager em) {
+        this.em = em;
     }
 }

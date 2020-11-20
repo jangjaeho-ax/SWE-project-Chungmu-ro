@@ -1,6 +1,5 @@
 package Chungmu_ro.schoolManagement;
 
-import Chungmu_ro.schoolManagement.repository.JpaStudentRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -18,15 +17,6 @@ public class SpringConfig {
         this.em = em;
     }
 
-    @Bean
-    public MemberRepository MemberRepository(){
 
-        return new JpaMemberRepository(em);
-    }
-    @Bean
-    public StudentRepository StudentRepository{
-
-        return new JpaStudentRepository(em);
-    }
 }
 

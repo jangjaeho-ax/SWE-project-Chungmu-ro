@@ -4,6 +4,7 @@ import javax.persistence.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
+
 @Entity
 @Table(name = "ATTENDANCE")
 public class Attendance {
@@ -18,7 +19,7 @@ public class Attendance {
     @Column(name =  "Date")
     private LocalDateTime date;
 
-    @Enumerated(EnumType.ORDINAL.STRING) @Column(name = "Status")
+    @Enumerated(EnumType.STRING) @Column(name = "Status")
     private AttendanceStatus attendanceStatus;
 
     public Long getAid() {

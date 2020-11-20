@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-@Table(name = "STUDENT_COURSE")
+@Table(name = "ENLIST")
 public class Enlist {
 
     @Id @Column(name ="EnlistID") @GeneratedValue(strategy =  GenerationType.IDENTITY)

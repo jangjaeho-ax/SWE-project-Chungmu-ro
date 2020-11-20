@@ -68,6 +68,12 @@ public class Student extends Member {
         this.sid = sid;
     }
 
+    public Student(String accountId, String accountPw, String fisrtName, String lastName, String email, Integer sid, Byte year) {
+        super(accountId, accountPw, fisrtName, lastName, email);
+        this.sid = sid;
+        this.year = year;
+    }
+
     public Student(String accountId, String accountPw, String fisrtName, String lastName, String email, Integer sid, Byte year, List<Enlist> enlistList, List<Tutoring> tutoringList, List<QA> qaList) {
         super(accountId, accountPw, fisrtName, lastName, email);
         this.sid = sid;
