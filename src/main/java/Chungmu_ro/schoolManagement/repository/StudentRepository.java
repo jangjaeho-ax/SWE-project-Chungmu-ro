@@ -19,7 +19,7 @@ public class StudentRepository {
         em.persist(student);
     }
 
-    public Optional<Student> findBySid(int sid){
+    public Optional<Student> findBySid(Integer sid){
         return Optional.ofNullable(em.find(Student.class, sid));
 
     }

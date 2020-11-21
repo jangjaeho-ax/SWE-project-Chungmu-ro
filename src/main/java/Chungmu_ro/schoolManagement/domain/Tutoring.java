@@ -38,7 +38,8 @@ public class Tutoring {
     }
 
     public void setStudent(Student student) {
-
+        if(this.student != null)
+            this.student.getTutoringList().remove(this);
         this.student = student;
         student.getTutoringList().add(this);
     }
@@ -48,6 +49,8 @@ public class Tutoring {
     }
 
     public void setProfessor(Professor professor) {
+        if(this.professor != null)
+            this.professor.getTutoringList().remove(this);
         this.professor = professor;
         professor.getTutoringList().add(this);
     }

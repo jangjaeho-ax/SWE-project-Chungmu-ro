@@ -33,7 +33,8 @@ public class Enlist {
     }
 
     public void setStudent(Student student) {
-
+        if(this.student != null)
+            this.student.getEnlistList().remove(this);
         this.student = student;
         student.getEnlistList().add(this);
     }
@@ -43,7 +44,8 @@ public class Enlist {
     }
 
     public void setCourse(Course course) {
-
+        if(this.course != null)
+            this.course.getEnlistList().remove(this);
         this.course = course;
         course.getEnlistList().add(this);
     }

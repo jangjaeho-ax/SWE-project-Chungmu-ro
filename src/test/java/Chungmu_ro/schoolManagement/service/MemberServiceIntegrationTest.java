@@ -24,7 +24,7 @@ public class MemberServiceIntegrationTest {
     ProfessorRepository professorRepository;
 
     @Test
-    void joinStudent() throws Exception {
+    void 학생회원가입() throws Exception {
     //Given
         Optional<Student> savedStudent = memberService.joinStudent("coblin", "1234", "jang", "jaeho", "email", (int)2015112117, (byte) 3);
         //When
@@ -37,15 +37,30 @@ public class MemberServiceIntegrationTest {
     @Test
     void 교수회원가입() throws Exception  {
         //Given
+        Optional<Professor> savedStudent = memberService.joinProfessor("coblin", "1234", "jang", "jaeho", "email", (int)2004000000);
         //When
+
         //Then
+        Professor findStudent = professorRepository.findByPid((int)2004000000).get();
+        assertEquals(savedStudent.get().getFisrtName(),findStudent.getFisrtName());
     }
 
     @Test
     void 학생로그인() throws Exception {
+        Optional<Student> savedStudent = memberService.joinStudent("coblin", "1234", "jang", "jaeho", "email", (int)2015112117, (byte) 3);
+
+        Optional<Student> logOnUser = memberService.studentLogin("coblin", "1234");
+
+        assertEquals(savedStudent,logOnUser);
     }
 
     @Test
     void 교수로그인() throws Exception {
+        Optional<Professor> savedProfessor = memberService.joinProfessor("coblin", "1234", "jang", "jaeho", "email", (int)2004000000);
+
+        Optional<Professor> logOnUser = memberService.professorLogin("coblin", "1234");
+
+        assertEquals(savedProfessor,logOnUser);
     }
+
 }

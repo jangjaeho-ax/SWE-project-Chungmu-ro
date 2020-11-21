@@ -38,16 +38,22 @@ public class QA {
     }
 
     public void setStudent(Student student) {
+        if(this.student != null)
+            this.student.getQaList().remove(this);
         this.student = student;
         student.getQaList().add(this);
     }
 
     public void setCourse(Course course) {
+        if(this.course != null)
+            this.course.getQaList().remove(this);
         this.course = course;
         course.getQaList().add(this);
     }
 
     public void setProfessor(Professor professor) {
+        if(this.professor != null)
+            this.professor.getQaList().remove(this);
         this.professor = professor;
         professor.getQaList().add(this);
     }

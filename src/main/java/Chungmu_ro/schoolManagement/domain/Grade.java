@@ -34,6 +34,8 @@ public class Grade {
     }
 
     public void setAssignment(Assignment assignment) {
+        if(this.assignment != null)
+            this.assignment.getGradeList().remove(this);
         this.assignment = assignment;
         assignment.getGradeList().add(this);
     }
@@ -43,7 +45,8 @@ public class Grade {
     }
 
     public void setEnlist(Enlist enlist) {
-
+        if(this.enlist != null)
+            this.enlist.getGradeList().remove(this);
         this.enlist = enlist;
         enlist.getGradeList().add(this);
     }

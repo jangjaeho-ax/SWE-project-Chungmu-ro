@@ -31,6 +31,8 @@ public class Attendance {
     }
 
     public void setEnlist(Enlist enlist) {
+        if(this.enlist != null)
+            this.enlist.getAttendanceList().remove(this);
         this.enlist = enlist;
         enlist.getAttendanceList().add(this);
     }

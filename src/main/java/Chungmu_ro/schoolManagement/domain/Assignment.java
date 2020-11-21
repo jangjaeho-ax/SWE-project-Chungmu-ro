@@ -47,6 +47,8 @@ public class Assignment {
 
     public void setCourse(Course course) {
 
+        if(this.course != null)
+            this.course.getAssignmentList().remove(this);
         this.course = course;
         course.getAssignmentList().add(this);
     }
@@ -102,12 +104,11 @@ public class Assignment {
     public Assignment() {
     }
 
-    public Assignment(Long AID) {
+    public Assignment(Long aid) {
         this.aid = aid;
     }
 
-    public Assignment(Long aid, Course course, String title, LocalDateTime starDate, LocalDateTime dueDate, Integer perfectScore, String description) {
-        this.aid = aid;
+    public Assignment(Course course, String title, LocalDateTime starDate, LocalDateTime dueDate, Integer perfectScore, String description) {
         this.course = course;
         this.title = title;
         this.starDate = starDate;

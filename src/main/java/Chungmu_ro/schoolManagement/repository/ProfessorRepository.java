@@ -20,7 +20,7 @@ public class ProfessorRepository {
 
     }
 
-    public Optional<Professor> findByPid(int pid){
+    public Optional<Professor> findByPid(Integer pid){
         return Optional.ofNullable(em.find(Professor.class, pid));
 
     }

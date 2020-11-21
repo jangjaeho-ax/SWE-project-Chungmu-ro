@@ -42,6 +42,8 @@ public class Course {
     }
 
     public void setProfessor(Professor professor) {
+        if(this.professor != null)
+            this.professor.getCourseList().remove(this);
         this.professor = professor;
         professor.getCourseList().add(this);
     }

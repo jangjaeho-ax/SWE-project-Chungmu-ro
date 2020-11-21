@@ -61,7 +61,7 @@ public class MemberService {
         }
         return Optional.ofNullable(professor);
     }
-
+    
     @Autowired
     public MemberService(StudentRepository studentRepository, ProfessorRepository professorRepository) {
         this.studentRepository = studentRepository;
