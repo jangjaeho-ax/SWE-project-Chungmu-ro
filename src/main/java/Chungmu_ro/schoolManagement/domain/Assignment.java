@@ -20,7 +20,7 @@ public class Assignment {
     private Course course;
 
     @OneToMany(mappedBy = "assignment",fetch = FetchType.LAZY)//mappedBy는 가짜 맴버로 이 맴버로 수정을 할 수 없다.
-    private List<Grade>  gradeList =new ArrayList<>();
+    private List<HandIn>  handInList =new ArrayList<>();
 
     @Column(name = "AssignmentTitle")
     private String title;
@@ -93,19 +93,15 @@ public class Assignment {
         this.description = description;
     }
 
-    public List<Grade> getGradeList() {
-        return gradeList;
+    public List<HandIn> getHandInList() {
+        return handInList;
     }
 
-    public void setGradeList(List<Grade> gradeList) {
-        this.gradeList = gradeList;
+    public void setHandInList(List<HandIn> handInList) {
+        this.handInList = handInList;
     }
 
     public Assignment() {
-    }
-
-    public Assignment(Long aid) {
-        this.aid = aid;
     }
 
     public Assignment(Course course, String title, LocalDateTime starDate, LocalDateTime dueDate, Integer perfectScore, String description) {
@@ -116,4 +112,5 @@ public class Assignment {
         this.perfectScore = perfectScore;
         this.description = description;
     }
+
 }

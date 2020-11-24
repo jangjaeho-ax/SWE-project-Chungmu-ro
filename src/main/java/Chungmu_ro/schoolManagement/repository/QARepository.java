@@ -1,7 +1,7 @@
 package Chungmu_ro.schoolManagement.repository;
 
-import Chungmu_ro.schoolManagement.domain.Grade;
 import Chungmu_ro.schoolManagement.domain.QA;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -11,13 +11,17 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
+@RequiredArgsConstructor
 public class QARepository {
 
-    @PersistenceContext
-    private EntityManager em;
+//    @PersistenceContext
+    private final EntityManager em;
 
     public void save(QA qa){
-        em.persist(qa);
+        if(qa.getQid()==null)
+            em.persist(qa);
+        else
+            em.merge(qa);
     }
 
     public Optional<QA> findByGid(Long qid){
@@ -27,9 +31,14 @@ public class QARepository {
     public List<QA> findAll(){
         return em.createQuery("select q from QA q",QA.class).getResultList();
     }
-    @Autowired
-    public QARepository(EntityManager em) {
-        this.em = em;
+    public void delete(QA qa){
+        qa.setStudent(null);
+        qa.setProfessor(null);
+        qa.setCourse(null);
+        em.remove(qa);
     }
+//    public QARepository(EntityManager em) {
+//        this.em = em;
+//    }
 
 }

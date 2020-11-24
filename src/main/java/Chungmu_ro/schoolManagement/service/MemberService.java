@@ -4,6 +4,7 @@ import Chungmu_ro.schoolManagement.domain.Professor;
 import Chungmu_ro.schoolManagement.domain.Student;
 import Chungmu_ro.schoolManagement.repository.ProfessorRepository;
 import Chungmu_ro.schoolManagement.repository.StudentRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -11,19 +12,21 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.Optional;
 
 @Service
-@Transactional
+@Transactional(readOnly = true)
+@RequiredArgsConstructor
 public class MemberService {
 
     private final StudentRepository studentRepository;
     private final ProfessorRepository professorRepository;
 
-
+    @Transactional
     public Optional<Student> joinStudent(String id, String pw, String firstName, String lastName,String email, int school_id, Byte year){
         createValidCheck(id, school_id, 0);
         Student student = new Student(id, pw, firstName, lastName, email, school_id, year);
         studentRepository.save(student);
         return Optional.ofNullable(student);
     }
+    @Transactional
     public  Optional<Professor> joinProfessor(String id, String pw, String firstName, String lastName,String email, int school_id){
         createValidCheck(id, school_id, 1);
         Professor professor = new Professor(id, pw, firstName, lastName, email, school_id);
@@ -61,10 +64,5 @@ public class MemberService {
         }
         return Optional.ofNullable(professor);
     }
-    
-    @Autowired
-    public MemberService(StudentRepository studentRepository, ProfessorRepository professorRepository) {
-        this.studentRepository = studentRepository;
-        this.professorRepository = professorRepository;
-    }
+
 }

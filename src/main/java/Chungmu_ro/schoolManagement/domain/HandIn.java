@@ -4,12 +4,13 @@ import org.hibernate.annotations.Columns;
 
 import javax.persistence.*;
 
+//***해당 과제에 대한 제출 정보와 점수를 가지고 있는 엔티티***
 @Entity
-@Table(name ="GRADE")
-public class Grade {
+@Table(name ="HANDIN")
+public class HandIn {
 
-    @Id @Column(name = "GradeID") @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long gid;
+    @Id @Column(name = "HandInID") @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long hid;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name ="AssignmentID")
@@ -22,11 +23,12 @@ public class Grade {
     @Column(name ="Score")
     private Integer score;
 
+    @Lob
     @Column(name ="Description")
     private String description;
 
-    public Long getGid() {
-        return gid;
+    public Long getHid() {
+        return hid;
     }
 
     public Assignment getAssignment() {
@@ -35,9 +37,9 @@ public class Grade {
 
     public void setAssignment(Assignment assignment) {
         if(this.assignment != null)
-            this.assignment.getGradeList().remove(this);
+            this.assignment.getHandInList().remove(this);
         this.assignment = assignment;
-        assignment.getGradeList().add(this);
+        assignment.getHandInList().add(this);
     }
 
     public Enlist getEnlist() {
@@ -46,9 +48,9 @@ public class Grade {
 
     public void setEnlist(Enlist enlist) {
         if(this.enlist != null)
-            this.enlist.getGradeList().remove(this);
+            this.enlist.getHandInList().remove(this);
         this.enlist = enlist;
-        enlist.getGradeList().add(this);
+        enlist.getHandInList().add(this);
     }
 
     public Integer getScore() {
@@ -67,10 +69,10 @@ public class Grade {
         this.description = description;
     }
 
-    public Grade() {
+    public HandIn() {
     }
 
-    public Grade(Assignment assignment, Enlist enlist, Integer score, String description) {
+    public HandIn(Assignment assignment, Enlist enlist, Integer score, String description) {
         this.assignment = assignment;
         this.enlist = enlist;
         this.score = score;

@@ -1,6 +1,7 @@
 package Chungmu_ro.schoolManagement.domain;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name ="QA")
@@ -20,6 +21,18 @@ public class QA {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name ="ProfessorID")
     private Professor professor;
+
+    @Lob
+    @Column(name = "Question")
+    private String question;
+
+    @Lob
+    @Column(name = "Answer")
+    private String answer;
+
+    @Column(name = "DateTime")
+    private LocalDateTime dateTime;
+
 
     public Long getQid() {
         return qid;
@@ -58,12 +71,35 @@ public class QA {
         professor.getQaList().add(this);
     }
 
+    public String getQuestion() {
+        return question;
+    }
+
+    public void setQuestion(String question) {
+        this.question = question;
+    }
+
+    public String getAnswer() {
+        return answer;
+    }
+
+    public void setAnswer(String answer) {
+        this.answer = answer;
+    }
+
+    public LocalDateTime getDateTime() {
+        return dateTime;
+    }
+
+    public void setDateTime(LocalDateTime dateTime) {
+        this.dateTime = dateTime;
+    }
+
     public QA() {
     }
 
-    public QA(Long qid, Student student, Course course, Professor professor) {
+    public QA( Student student, Course course, Professor professor) {
 
-        this.qid = qid;
         this.student = student;
         this.course = course;
         this.professor = professor;

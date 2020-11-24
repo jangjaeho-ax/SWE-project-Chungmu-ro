@@ -22,7 +22,7 @@ public class Enlist {
     private List<Attendance> attendanceList =new ArrayList<>();
 
     @OneToMany(mappedBy = "enlist",fetch = FetchType.LAZY)
-    private List<Grade> gradeList =new ArrayList<>();
+    private List<HandIn> handInList =new ArrayList<>();
 
     public Long getEid() {
         return eid;
@@ -58,26 +58,22 @@ public class Enlist {
         this.attendanceList = attendanceList;
     }
 
-    public List<Grade> getGradeList() {
-        return gradeList;
+    public List<HandIn> getHandInList() {
+        return handInList;
     }
 
-    public void setGradeList(List<Grade> gradeList) {
-        this.gradeList = gradeList;
+    public void setHandInList(List<HandIn> handInList) {
+        this.handInList = handInList;
     }
 
     public Enlist() {
     }
 
-    public Enlist(Long eid) {
-        this.eid = eid;
-    }
 
-    public Enlist(Long eid, Student student, Course course, List<Attendance> attendanceList, List<Grade> gradeList) {
-        this.eid = eid;
+    public Enlist(Student student, Course course, List<Attendance> attendanceList, List<HandIn> handInList) {
         this.student = student;
         this.course = course;
         this.attendanceList = attendanceList;
-        this.gradeList = gradeList;
+        this.handInList = handInList;
     }
 }

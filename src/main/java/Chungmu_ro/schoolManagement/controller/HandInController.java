@@ -1,4 +1,4 @@
 package Chungmu_ro.schoolManagement.controller;
 
-public class gradeController {
+public class HandInController {
 }

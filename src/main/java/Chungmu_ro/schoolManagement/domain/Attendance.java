@@ -20,7 +20,7 @@ public class Attendance {
     private LocalDateTime date;
 
     @Enumerated(EnumType.STRING) @Column(name = "Status")
-    private AttendanceStatus attendanceStatus;
+    private AttendanceStatus attendanceStatus =AttendanceStatus.YET;
 
     public Long getAid() {
         return Aid;

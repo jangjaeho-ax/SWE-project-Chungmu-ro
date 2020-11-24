@@ -2,6 +2,7 @@ package Chungmu_ro.schoolManagement.repository;
 
 import Chungmu_ro.schoolManagement.domain.Professor;
 import Chungmu_ro.schoolManagement.domain.Student;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -11,12 +12,16 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
+@RequiredArgsConstructor
 public class ProfessorRepository {
-    @PersistenceContext
-    private EntityManager em;
+//    @PersistenceContext
+    private final EntityManager em;
 
     public void save(Professor professor){
-        em.persist(professor);
+        if(findByPid(professor.getPid()).isPresent())
+            em.merge(professor);
+        else
+            em.persist(professor);
 
     }
 
@@ -33,8 +38,8 @@ public class ProfessorRepository {
                 .setParameter("AccountId",AccountId)
                 .getResultList().stream().findAny();
     }
-    @Autowired
-    public ProfessorRepository(EntityManager em) {
-        this.em = em;
-    }
+
+//    public ProfessorRepository(EntityManager em) {
+//        this.em = em;
+//    }
 }
