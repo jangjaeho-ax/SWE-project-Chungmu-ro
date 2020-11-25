@@ -28,6 +28,17 @@ public class StudentService {
     private final TutoringRepository tutoringRepository;
     private final EnlistRepository enlistRepository;
 
+
+    public Optional<Student> studentLogin(String id, String pw) {
+        Student student = studentRepository.findByAccountId(id).get();
+        if(student ==null){
+            throw new  IllegalStateException("아이디가 틀림");
+        }
+        if(student.getAccountPw().equals(pw) ==false) {
+            throw new IllegalStateException("비밀번호가 틀림");
+        }
+        return Optional.ofNullable(student);
+    }
     //***강의실 선택 함수***
     public List<Course> getCourseList(Student student){
         //자신이 수강하고 있는 전체 강의 정보를 가져오는 함수, 학생 엔티티 즉 유저 엔티티를 입력값으로 받는다.
@@ -195,15 +206,14 @@ public class StudentService {
             throw new IllegalStateException("해당 강의를 수강하고 있지 않았습니다.");
 
         for(Tutoring t: tutorings){
-            if(startTime.isAfter(t.getStartTime())&startTime.isBefore(t.getEndTime())) {
+            if(startTime.isAfter(t.getStartTime())&&startTime.isBefore(t.getEndTime())) {
                 return Optional.ofNullable(t);
             }
-            else if(endTime.isAfter(t.getStartTime())&endTime.isBefore(t.getEndTime())) {
+            else if(endTime.isAfter(t.getStartTime())&&endTime.isBefore(t.getEndTime())) {
                 return Optional.ofNullable(t);
             }
         }
-        tutoring.setStudent(student);
-        tutoring.setProfessor(professor);
+
         studentRepository.save(student);
         professorRepository.save(professor);
         tutoringRepository.save(tutoring);

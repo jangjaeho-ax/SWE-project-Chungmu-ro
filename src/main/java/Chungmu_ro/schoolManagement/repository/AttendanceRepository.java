@@ -32,7 +32,10 @@ public class AttendanceRepository {
     public List<Attendance> findAll(){
         return em.createQuery("select a from Attendance a", Attendance.class).getResultList();
     }
-
+    public void delete(Attendance attendance){
+        attendance.setEnlist(null);
+        em.remove(attendance);
+    }
 //    public AttendanceRepository(EntityManager em) {
 //        this.em = em;
 //    }

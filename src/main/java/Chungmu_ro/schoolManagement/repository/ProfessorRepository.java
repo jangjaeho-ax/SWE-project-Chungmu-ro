@@ -38,7 +38,6 @@ public class ProfessorRepository {
                 .setParameter("AccountId",AccountId)
                 .getResultList().stream().findAny();
     }
-
 //    public ProfessorRepository(EntityManager em) {
 //        this.em = em;
 //    }

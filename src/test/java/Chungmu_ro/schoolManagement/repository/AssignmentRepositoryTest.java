@@ -25,7 +25,7 @@ class AssignmentRepositoryTest {
 
 
     @Test
-    void 저장테스트() throws Exception{
+    void 저장테스트() throws Exception {
 
         Course course= new Course(1234);
         Assignment assignment =new Assignment(course,"test", LocalDateTime.now(),LocalDateTime.now(),100,"this is test");

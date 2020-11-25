@@ -56,12 +56,8 @@ public class Attendance {
     public Attendance() {
     }
 
-    public Attendance(Long aid) {
-        Aid = aid;
-    }
+    public Attendance( Enlist enlist, LocalDateTime date, AttendanceStatus attendanceStatus) {
 
-    public Attendance(Long aid, Enlist enlist, LocalDateTime date, AttendanceStatus attendanceStatus) {
-        Aid = aid;
         this.enlist = enlist;
         this.date = date;
         this.attendanceStatus = attendanceStatus;

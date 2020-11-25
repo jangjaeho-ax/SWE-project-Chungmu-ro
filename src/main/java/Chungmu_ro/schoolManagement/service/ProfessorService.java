@@ -3,6 +3,7 @@ package Chungmu_ro.schoolManagement.service;
 import Chungmu_ro.schoolManagement.domain.*;
 import Chungmu_ro.schoolManagement.repository.*;
 import lombok.RequiredArgsConstructor;
+import org.apache.catalina.Store;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -17,12 +18,24 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class ProfessorService {
 
+    private StudentRepository studentRepository;
     private ProfessorRepository professorRepository;
     private AssignmentRepository assignmentRepository;
     private AttendanceRepository attendanceRepository;
     private HandInRepository handInRepository;
     private QARepository qaRepository;
     private TutoringRepository tutoringRepository;
+
+    public Optional<Professor> professorLogin(String id, String pw) {
+        Professor professor = professorRepository.findByAccountId(id).get();
+        if(professor ==null){
+            throw new  IllegalStateException("아이디가 틀림");
+        }
+        if(professor.getAccountPw().equals(pw) ==false) {
+            throw new IllegalStateException("비밀번호가 틀림");
+        }
+        return Optional.ofNullable(professor);
+    }
 
     public List<Course> getCourseList(Professor professor)  {
         //자신이 수강하고 있는 전체 강의 정보를 가져오는 함수, 학생 엔티티 즉 유저 엔티티를 입력값으로 받는다.
@@ -49,11 +62,22 @@ public class ProfessorService {
             throw new NoSuchElementException("등록된 과제가 없습니다.");
         return result;
     }
-    public void addAssignment(Assignment assignment){
+    public void addAssignment(Course course,Assignment assignment){
         //과제 추가 수정 함수
+        List<HandIn> handIns = assignment.getHandInList();
+        List<Enlist> enlists = course.getEnlistList();
+        if(handIns.isEmpty()){
+            for(Enlist e :enlists){
+                HandIn newHandIn =new HandIn(assignment,e,0,"");
+                handIns.add(newHandIn);
+            }
+        }
         if(assignment == null)
             throw new NoSuchElementException("추가하고자 하는 과제가 없습니다.");
         assignmentRepository.save(assignment);
+    }
+    public void subAssignment(Assignment assignment){
+        assignmentRepository.delete(assignment);
     }
     //***성적(과제물) 관련 함수***
     public List<HandIn> getHandInList(Assignment assignment) {
@@ -69,6 +93,7 @@ public class ProfessorService {
             throw new NoSuchElementException("해당 과제가 없습니다.");
         handInRepository.save(handIn);
     }
+
     //***출석 관련 함수***
     public List<Attendance> getAttendanceList(Course course){
         List<Attendance> result = new ArrayList<>();
@@ -102,28 +127,28 @@ public class ProfessorService {
             throw new NoSuchElementException("강의를 담당하는 교수님이 없습니다.");
         return professor.getTutoringList();
     }
-    public Optional<Tutoring> addTutoring(Tutoring tutoring){
-        Student student = tutoring.getStudent();
+    public Optional<Tutoring> addTutoring(Professor professor,Tutoring tutoring){
+        //튜터링 정보 수정 함수
         List<Tutoring> tutorings = professor.getTutoringList();
-        List<Course> courses = getCourseList(student);
+        Student student = tutoring.getStudent();
         LocalDateTime startTime = tutoring.getStartTime();
         LocalDateTime endTime = tutoring.getEndTime();
-        if(courses.contains(course)==false)
-            throw new IllegalStateException("해당 강의를 수강하고 있지 않았습니다.");
-
+        if(!tutorings.contains(tutoring))
+            throw new IllegalStateException("튜터링의 교수 정보와 입력된 교수 정보가 다릅니다");
         for(Tutoring t: tutorings){
-            if(startTime.isAfter(t.getStartTime())&startTime.isBefore(t.getEndTime())) {
+            if(startTime.isAfter(t.getStartTime())&&startTime.isBefore(t.getEndTime())) {
                 return Optional.ofNullable(t);
             }
-            else if(endTime.isAfter(t.getStartTime())&endTime.isBefore(t.getEndTime())) {
+            else if(endTime.isAfter(t.getStartTime())&&endTime.isBefore(t.getEndTime())) {
                 return Optional.ofNullable(t);
             }
         }
-        tutoring.setStudent(student);
-        tutoring.setProfessor(professor);
         studentRepository.save(student);
         professorRepository.save(professor);
         tutoringRepository.save(tutoring);
         return Optional.ofNullable(tutoring);
+    }
+    public void subTutoring(Tutoring tutoring){
+        tutoringRepository.delete(tutoring);
     }
 }

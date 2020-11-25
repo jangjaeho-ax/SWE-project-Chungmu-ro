@@ -1,6 +1,7 @@
 package Chungmu_ro.schoolManagement.repository;
 
 import Chungmu_ro.schoolManagement.domain.Assignment;
+import Chungmu_ro.schoolManagement.domain.HandIn;
 import Chungmu_ro.schoolManagement.domain.Student;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import lombok.RequiredArgsConstructor;
@@ -35,6 +36,13 @@ public class AssignmentRepository {
     public List<Assignment> findAll(){
         return em.createQuery("select a from Assignment a",Assignment.class).getResultList();
     }
-
-
+    public void delete(Assignment assignment){
+        assignment.setCourse(null);
+        List<HandIn> handIns = assignment.getHandInList();
+        for(HandIn h : handIns) {
+            h.setEnlist(null);
+            em.remove(h);
+        }
+        em.remove(assignment);
+    }
 }

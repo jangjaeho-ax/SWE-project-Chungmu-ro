@@ -1,8 +1,6 @@
 package Chungmu_ro.schoolManagement.repository;
 
-import Chungmu_ro.schoolManagement.domain.Enlist;
-import Chungmu_ro.schoolManagement.domain.Student;
-import Chungmu_ro.schoolManagement.domain.Tutoring;
+import Chungmu_ro.schoolManagement.domain.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -41,8 +39,17 @@ public class StudentRepository {
     }
     public void delete(Student student){
         List<Enlist> enlists = student.getEnlistList();
-        for(Enlist e: enlists)
+        for(Enlist e: enlists) {
+            List<Attendance> attendances = e.getAttendanceList();
+            List<HandIn> handIns = e.getHandInList();
+            for(Attendance a : attendances)
+                em.remove(a);
+            for(HandIn h : handIns){
+                h.setAssignment(null);
+                em.remove(h);
+            }
             em.remove(e);
+        }
         em.remove(student);
     }
 //    public StudentRepository(EntityManager em) {
