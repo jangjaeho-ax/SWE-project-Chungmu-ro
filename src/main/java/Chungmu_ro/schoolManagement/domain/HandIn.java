@@ -23,9 +23,12 @@ public class HandIn {
     @Column(name ="Score")
     private Integer score;
 
-    @Lob
-    @Column(name ="Description")
-    private String description;
+    @Column(name ="FileName")
+    private String fileName;
+    @Column(name ="FileOriginName")
+    private String fileOriginName;
+    @Column(name ="FileURL")
+    private String fileURL;
 
     public Long getHid() {
         return hid;
@@ -61,21 +64,39 @@ public class HandIn {
         this.score = score;
     }
 
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
     public HandIn() {
     }
 
-    public HandIn(Assignment assignment, Enlist enlist, Integer score, String description) {
+    public String getFileName() {
+        return fileName;
+    }
+
+    public void setFileName(String fileName) {
+        this.fileName = fileName;
+    }
+
+    public String getFileOriginName() {
+        return fileOriginName;
+    }
+
+    public void setFileOriginName(String fileOriginName) {
+        this.fileOriginName = fileOriginName;
+    }
+
+    public String getFileURL() {
+        return fileURL;
+    }
+
+    public void setFileURL(String fileURL) {
+        this.fileURL = fileURL;
+    }
+
+    public HandIn(Assignment assignment, Enlist enlist, Integer score, String fileName, String fileOriginName, String fileURL) {
         this.assignment = assignment;
         this.enlist = enlist;
         this.score = score;
-        this.description = description;
+        this.fileName = fileName;
+        this.fileOriginName = fileOriginName;
+        this.fileURL = fileURL;
     }
 }

@@ -17,7 +17,9 @@ public class AttendanceRepository {
 
 //    @PersistenceContext
     private final EntityManager em;
-
+    public void init(){
+        em.createQuery("select a from Attendance a join fetch  a.enlist ");
+    }
     public void save(Attendance attendance){
         if(attendance.getAid() ==null)
             em.persist(attendance);

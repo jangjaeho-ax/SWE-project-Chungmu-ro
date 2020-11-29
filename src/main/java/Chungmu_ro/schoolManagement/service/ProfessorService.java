@@ -26,7 +26,7 @@ public class ProfessorService {
     private QARepository qaRepository;
     private TutoringRepository tutoringRepository;
 
-    public Optional<Professor> professorLogin(String id, String pw) {
+    public Professor professorLogin(String id, String pw) {
         Professor professor = professorRepository.findByAccountId(id).get();
         if(professor ==null){
             throw new  IllegalStateException("아이디가 틀림");
@@ -34,7 +34,7 @@ public class ProfessorService {
         if(professor.getAccountPw().equals(pw) ==false) {
             throw new IllegalStateException("비밀번호가 틀림");
         }
-        return Optional.ofNullable(professor);
+        return professor;
     }
 
     public List<Course> getCourseList(Professor professor)  {
@@ -68,7 +68,7 @@ public class ProfessorService {
         List<Enlist> enlists = course.getEnlistList();
         if(handIns.isEmpty()){
             for(Enlist e :enlists){
-                HandIn newHandIn =new HandIn(assignment,e,0,"");
+                HandIn newHandIn =new HandIn(assignment,e,0,"","","");
                 handIns.add(newHandIn);
             }
         }

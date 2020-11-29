@@ -18,10 +18,10 @@ public class Enlist {
     @JoinColumn(name="CourseID")
     private Course course;
 
-    @OneToMany(mappedBy = "enlist",fetch = FetchType.LAZY)
+    @OneToMany(fetch = FetchType.LAZY)
     private List<Attendance> attendanceList =new ArrayList<>();
 
-    @OneToMany(mappedBy = "enlist",fetch = FetchType.LAZY)
+    @OneToMany(fetch = FetchType.LAZY)
     private List<HandIn> handInList =new ArrayList<>();
 
     public Long getEid() {

@@ -1,5 +1,6 @@
 package Chungmu_ro.schoolManagement.controller;
 
+import Chungmu_ro.schoolManagement.domain.Professor;
 import Chungmu_ro.schoolManagement.form.LoginForm;
 import Chungmu_ro.schoolManagement.service.ProfessorService;
 import Chungmu_ro.schoolManagement.service.StudentService;
@@ -10,6 +11,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 
+import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 
 @Controller
@@ -23,14 +25,20 @@ public class ProfessorController {
         return "professor/loginForm";
     }
     @PutMapping(value = "/professor/login")
-    public String login(@Valid LoginForm loginForm, BindingResult result) {
+    public String login(@Valid LoginForm loginForm, BindingResult result, HttpSession session, Model model) {
         if(result.hasErrors()){
             return "professor/loginForm";
         }
 
         String id = loginForm.getId();
         String passWord = loginForm.getPassWord();
-        professorService.professorLogin(id,passWord);
+
+        Professor professor = professorService.professorLogin(id, passWord);
+
+        session.setAttribute("studentId",professor.getPid());
+        model.addAttribute("user",professor);
         return "redirect:/";
     }
+
+
 }

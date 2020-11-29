@@ -1,9 +1,6 @@
 package Chungmu_ro.schoolManagement.repository;
 
-import Chungmu_ro.schoolManagement.domain.Attendance;
-import Chungmu_ro.schoolManagement.domain.Course;
-import Chungmu_ro.schoolManagement.domain.Enlist;
-import Chungmu_ro.schoolManagement.domain.HandIn;
+import Chungmu_ro.schoolManagement.domain.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -19,7 +16,10 @@ public class EnlistRepository {
 
 //    @PersistenceContext
     private final EntityManager em;
-
+    public void init(){
+        em.createQuery("select e from Enlist e join fetch e.course");
+        em.createQuery("select e from Enlist e join fetch e.student");
+    }
     public void save(Enlist enlist){
         if(enlist.getEid() ==null)
             em.persist(enlist);
@@ -27,6 +27,30 @@ public class EnlistRepository {
             em.merge(enlist);
     }
 
+    public List<Enlist> findBySid(Integer sid){
+
+        return em.createQuery("select e from Enlist e join e.student s " +
+                "on s.sid = :sid",Enlist.class)
+                .setParameter("sid", sid)
+                .getResultList();
+
+    }
+    public List<Enlist> findByCid(Integer cid){
+
+        return em.createQuery("select e from Enlist e join e.course c" +
+                "on c.cid = :cid",Enlist.class)
+                .setParameter("cid", cid)
+                .getResultList();
+    }
+    public Optional<Enlist> findBySidCid(Integer sid, Integer cid){
+
+        return  em.createQuery("select e from Enlist e join e.student s " +
+                "on s.sid = :sid " +
+                "where exists (select e from Enlist e join e.course c on c.cid = :cid)", Enlist.class)
+                .setParameter("cid", cid)
+                .setParameter("sid", sid)
+                .getResultList().stream().findAny();
+    }
     public Optional<Enlist> findByEid(Long eid){
         return Optional.ofNullable(em.find(Enlist.class, eid));
 

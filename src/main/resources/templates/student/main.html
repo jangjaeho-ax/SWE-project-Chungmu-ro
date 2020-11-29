@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments/header :: header">
+    <title>충무로 3번 출구</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+</head>
+<body>
+<div class="container">
+    <div th:replace="fragments/bodyHeader :: bodyHeader" />
+
+    <div class="jumbotron">
+        <h1>메인 페이지</h1>
+        <p class="lead">강의실 선택</p>
+    </div>
+    <table class="table table-striped">
+        <thead>
+        <tr>
+            <th>#</th>
+            <th>강의이름</th>
+            <th></th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="course : ${courses}">
+            <td th:text="${course.cid}"></td>
+            <td th:text="${course.courseName}"></td>
+            <td>
+                <a href="#" th:href="@{/student/{id}/room (id=${course.cid})}"
+                   class="btn btn-primary" role="button">선택</a>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+    <div th:if="${message}" th:text="${message}" th:class="${'alert ' + alertClass}"/>
+    <div th:replace="fragments/footer :: footer" />
+</div> <!-- /container -->
+</body>
+</html>

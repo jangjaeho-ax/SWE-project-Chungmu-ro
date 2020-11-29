@@ -21,6 +21,11 @@ public class AssignmentRepository {
 
     private final EntityManager em;
 
+    public void init(){
+
+        em.createQuery("select a from Assignment a join fetch a.course");
+        em.createQuery("select a from Assignment a join fetch a.handInList");
+    }
     public void save(Assignment assignment){
         if(assignment.getAid() ==null)
             em.persist(assignment);
@@ -36,6 +41,11 @@ public class AssignmentRepository {
     public List<Assignment> findAll(){
         return em.createQuery("select a from Assignment a",Assignment.class).getResultList();
     }
+    public List<Assignment> findByCid(Integer cid){
+        return em.createQuery("select a from Assignment a join a.course c " +
+                        "on c.cid = :cid", Assignment.class)
+                .setParameter("cid", cid).getResultList();
+    }
     public void delete(Assignment assignment){
         assignment.setCourse(null);
         List<HandIn> handIns = assignment.getHandInList();
@@ -45,4 +55,5 @@ public class AssignmentRepository {
         }
         em.remove(assignment);
     }
+
 }

@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments/header :: header">
+    <title>충무로 3번 출구</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+</head>
+<body>
+<div class="container">
+    <div th:replace="fragments/bodyHeader :: bodyHeader" />
+
+    <div class="jumbotron">
+        <h1 th:text = "${course.courseName}+${course.cid}"/>
+        <p class="lead" >세부 정보</p>
+    </div>
+    <h4>과제 정보</h4>
+
+    <div>
+        <label class ="label lable-info">과제 제목</label>
+        <p th:text ="${assignment.title}"/>
+    </div>
+    <div>
+        <label class ="label lable-info">시작 기한</label>
+        <p th:text ="${assignment.starDate}"/>
+    </div>
+    <div>
+        <label class ="label lable-info">종료 기한</label>
+        <p th:text ="${assignment.dueDate}"/>
+    </div>
+    <div>
+        <label class ="label lable-info">과제 설명</label>
+        <p th:text ="${assignment.description}"/>
+    </div>
+    <h4>제출 정보</h4>
+    <div>
+        <label class ="label lable-info">과제 성적</label>
+        <p th:text ="${handIn.score}"/>
+        <input type ="hidden" th:field ="${handIn.score}"/>
+    </div>
+        <label class ="label lable-info">제출 파일</label>
+        <p>
+            <a th:unless ="${handIn.fileName == ''}"
+               th:href="@{student/fileDown/{hid} (hid =${handIn.hid})}">[[${handIn.fileOriginName}]]</a>
+        </p>
+    <div>
+        <input type ="submit" th:value ="목록"
+            th:formaction="@{/student/{cid}/assignment (cid=${course.cid})}">
+        <input type ="submit" th:value ="수정"
+               th:formaction="@{/student/{cid}/{aid}/update (cid=${course.cid}, aid=${assignment.aid})}">
+    </div>
+    <div th:if="${message}" th:text="${message}" th:class="${'alert ' + alertClass}"/>
+    <div th:replace="fragments/footer :: footer" />
+</div> <!-- /container -->
+</body>
+</html>

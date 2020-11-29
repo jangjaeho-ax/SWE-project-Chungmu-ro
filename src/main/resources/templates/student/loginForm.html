@@ -30,6 +30,7 @@ border-color: #bd2130;
         <button type="submit" class="btn btn-primary">Submit</button>
     </form>
     <br/>
+    <div th:if="${message}" th:text="${message}" th:class="${'alert ' + alertClass}"/>
     <div th:replace="fragments/footer :: footer" />
 </div> <!-- /container -->
 </body>

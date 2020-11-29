@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments/header :: header">
+    <title>충무로 3번 출구</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+</head>
+<body>
+<div class="container">
+    <div th:replace="fragments/bodyHeader :: bodyHeader" />
+
+    <div class="jumbotron">
+        <h1 th:text = "${course.courseName}+${course.cid}"/>
+        <p class="lead" >제출 파일 수정</p>
+    </div>
+    <h4>제출 정보</h4>
+    <form th:action ="/student/{cid}/{aid}/fileInsert" th:method = "post" enctype="multipart/form-data">
+    <label class ="label lable-info">제출 파일</label>
+    <input type="file" th:field = "file">
+    </form>>
+    <div th:if="${message}" th:text="${message}" th:class="${'alert ' + alertClass}"/>
+    <div th:replace="fragments/footer :: footer" />
+</div> <!-- /container -->
+</body>
+</html>

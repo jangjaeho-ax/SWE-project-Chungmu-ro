@@ -20,6 +20,6 @@ public class LoginPageController {
     @RequestMapping("/")
     public String mainPage(Model model) {
         log.info("Login controller");
-        return "main";
+        return "welcome";
     }
 }

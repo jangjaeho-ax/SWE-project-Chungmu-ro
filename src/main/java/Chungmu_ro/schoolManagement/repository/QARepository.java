@@ -16,7 +16,11 @@ public class QARepository {
 
 //    @PersistenceContext
     private final EntityManager em;
-
+    public void init(){
+        em.createQuery("select q from QA q join fetch q.student");
+        em.createQuery("select q from QA q join fetch q.course");
+        em.createQuery("select q from QA q join fetch q.professor");
+    }
     public void save(QA qa){
         if(qa.getQid()==null)
             em.persist(qa);

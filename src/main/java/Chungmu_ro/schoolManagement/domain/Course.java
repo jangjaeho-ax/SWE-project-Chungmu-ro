@@ -79,6 +79,11 @@ public class Course {
         this.cid = cid;
     }
 
+    public Course(Integer cid,String courseName) {
+        this.cid = cid;
+        this.courseName = courseName;
+    }
+
     public Course(Integer cid, Professor professor, String courseName, List<Enlist> enlistList, List<QA> qaList, List<Assignment> assignmentList) {
         this.cid = cid;
         this.professor = professor;

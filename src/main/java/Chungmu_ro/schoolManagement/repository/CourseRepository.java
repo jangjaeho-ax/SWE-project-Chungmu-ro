@@ -1,14 +1,10 @@
 package Chungmu_ro.schoolManagement.repository;
 
-import Chungmu_ro.schoolManagement.domain.Assignment;
-import Chungmu_ro.schoolManagement.domain.Attendance;
 import Chungmu_ro.schoolManagement.domain.Course;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 import java.util.List;
 import java.util.Optional;
 
@@ -17,7 +13,13 @@ import java.util.Optional;
 public class CourseRepository {
 
     private final EntityManager em;
+    public void init(){
 
+        em.createQuery("select c from Course c join fetch c.professor ");
+        em.createQuery("select c from Course c join fetch c.enlistList ");
+        em.createQuery("select c from Course c join fetch c.qaList ");
+        em.createQuery("select c from Course c join fetch c.assignmentList ");
+    }
     public void save(Course course){
         if(findByCid(course.getCid()).isPresent())
             em.merge(course);

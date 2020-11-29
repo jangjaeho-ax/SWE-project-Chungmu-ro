@@ -16,7 +16,12 @@ public class StudentRepository {
 
 //    @PersistenceContext
     private final EntityManager em;
+    public void init(){
 
+        em.createQuery("select s from Student s join fetch s.enlistList");
+        em.createQuery("select s from Student s join fetch s.tutoringList");
+        em.createQuery("select s from Student s join fetch s.qaList");
+    }
     public void save(Student student){
         if(findBySid(student.getSid()).isPresent())
             em.merge(student);
@@ -25,6 +30,7 @@ public class StudentRepository {
     }
 
     public Optional<Student> findBySid(Integer sid){
+
         return Optional.ofNullable(em.find(Student.class, sid));
 
     }
@@ -33,7 +39,8 @@ public class StudentRepository {
     }
 
     public Optional<Student> findByAccountId(String AccountId){
-        return  em.createQuery("select s from Student s where s.AccountId =:AccountId",Student.class)
+        return  em.createQuery("select s from Student s join fetch s.enlistList" +
+                " where s.AccountId =:AccountId",Student.class)
                 .setParameter("AccountId",AccountId)
                 .getResultList().stream().findAny();
     }
@@ -55,4 +62,5 @@ public class StudentRepository {
 //    public StudentRepository(EntityManager em) {
 //        this.em = em;
 //    }
+
 }

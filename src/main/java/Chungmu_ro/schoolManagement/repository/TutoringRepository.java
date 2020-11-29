@@ -17,7 +17,10 @@ public class TutoringRepository {
 
 //    @PersistenceContext
     private final EntityManager em;
-
+    public void init(){
+        em.createQuery("select t from Tutoring t join fetch t.student ");
+        em.createQuery("select t from Tutoring t join fetch t.professor ");
+    }
     public void save(Tutoring tutoring){
         if(tutoring.getTid()==null)
             em.persist(tutoring);
