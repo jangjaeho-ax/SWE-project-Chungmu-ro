@@ -10,24 +10,22 @@
 
     <div class="jumbotron">
         <h1 th:text = "${course.courseName}+${course.cid}"/>
-        <p class="lead">과제 페이지</p>
+        <p class="lead">출석 페이지</p>
     </div>
     <table class="table table-striped">
         <thead>
         <tr>
             <th>#</th>
-            <th>과제 이름</th>
+            <th>날짜</th>
+            <th>출석 상태</th>
             <th></th>
         </tr>
         </thead>
         <tbody>
-        <tr th:each="assignment : ${assignments}">
-            <td th:text="${assignmentStat.index}"></td>
-            <td th:text="${assignment.title}"></td>
-            <td>
-                <a href="#" th:href="@{/student/{cid}/{aid}/assignmentDetail (cid=${course.cid}, aid=${assignment.aid})}"
-                   class="btn btn-primary" role="button">자세히 보기</a>
-            </td>
+        <tr th:each="attendance : ${attendances}">
+            <td th:text="${attendanceStat.index}"></td>
+            <td th:text="${attendance.date}"></td>
+            <td th:text="${attendance.attendanceStatus}"></td>
         </tr>
         </tbody>
 

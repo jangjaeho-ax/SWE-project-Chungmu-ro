@@ -13,10 +13,11 @@
         <p class="lead" >제출 파일 수정</p>
     </div>
     <h4>제출 정보</h4>
-    <form th:action ="/student/{cid}/{aid}/fileInsert" th:method = "post" enctype="multipart/form-data">
-    <label class ="label lable-info">제출 파일</label>
-    <input type="file" th:field = "file">
-    </form>>
+    <form input th:action ="@{/student/{cid}/{aid}/fileInsert (cid=${course.cid}, aid=${assignment.aid})}" th:method = "post" enctype="multipart/form-data">
+        <label class ="label lable-info">제출 파일</label>
+        <input type="file" name = "file"></input>
+        <input type ="submit">보내기</input>
+    </form>
     <div th:if="${message}" th:text="${message}" th:class="${'alert ' + alertClass}"/>
     <div th:replace="fragments/footer :: footer" />
 </div> <!-- /container -->

@@ -25,6 +25,7 @@ public class StudentService {
     private final ProfessorRepository professorRepository;
     private final CourseRepository courseRepository;
     private final AssignmentRepository assignmentRepository;
+    private final AttendanceRepository attendanceRepository;
     private final HandInRepository handInRepository;
     private final QARepository qaRepository;
     private final TutoringRepository tutoringRepository;
@@ -126,11 +127,12 @@ public class StudentService {
         return assignmentList;
     }
     public Assignment findAssignment(Long aid) throws  Exception {
-        Assignment assignment = assignmentRepository.findByAid(aid).get();
-        if(assignment == null)
+        Optional<Assignment> assignment = assignmentRepository.findByAid(aid);
+        if(!assignment.isPresent())
             throw new NoSuchElementException("선택한 과제가 없습니다.");//예외 발생
-        return assignment;
+        return assignment.get();
     }
+    @Transactional
     public HandIn findHandIn(Integer sid,Integer cid, Long aid) throws  Exception{
         Optional<Enlist> enlist = enlistRepository.findBySidCid(sid,cid);
         Optional<Assignment> assignment = assignmentRepository.findByAid(aid);
@@ -142,6 +144,7 @@ public class StudentService {
         if(!handIn.isPresent()) {
             HandIn newHandIn =new HandIn(assignment.get(),enlist.get(),0,"","","");
             handInRepository.save(newHandIn);
+            return newHandIn;
         }
         return handIn.get();
     }
@@ -222,7 +225,23 @@ public class StudentService {
             throw new NoSuchElementException("Qa 리스트가 없습니다.");
         return course.getQaList();
     }
+    public List<QA> getQAList(Integer cid) throws  Exception {
+        //내 QA 리스트를 가져오는 함수, 학생 엔티티 즉 자기 자신 엔티티를 입력값으로 받는다.
+        Optional<Course> course = courseRepository.findByCid(cid);
+        if(!course.isPresent())
+            throw new NoSuchElementException("선택한 강의가 없습니다.");
 
+        List<QA> qaList = qaRepository.findByCid(cid);
+        if(qaList.isEmpty())
+            throw new NoSuchElementException("Qa 리스트가 없습니다.");
+        return qaList;
+    }
+    public QA findQA(Long qid) throws  Exception{
+        Optional<QA> qa = qaRepository.findByQid(qid);
+        if(!qa.isPresent())
+            throw new NoSuchElementException("선택한 QA 정보가 없습니다.");
+        return qa.get();
+    }
     public void addQA(Course course,Student student, QA qa)  throws Exception{
         //QA 수정 등록 함수, course
         Professor professor = course.getProfessor();
@@ -260,6 +279,16 @@ public class StudentService {
                 result.addAll(e.getAttendanceList());
             }
         }
+        if(result.isEmpty())
+            throw new IllegalStateException("출석 정보가 비어 있습니다.");
+        return result;
+    }
+    public List<Attendance> getMyAttendanceList(Integer cid, Integer sid)  throws Exception{
+        //출석 리스트를 가져오는 함수,강의 엔티티를 입력으로 받는다.
+        Optional<Enlist> enlist = enlistRepository.findBySidCid(sid, cid);
+        if (!enlist.isPresent())//비어있는 경우
+            throw new NoSuchElementException("수강하고 있는 강의가 아닙니다.");//예외 발생
+        List<Attendance> result = attendanceRepository.findByEid(enlist.get().getEid());
         if(result.isEmpty())
             throw new IllegalStateException("출석 정보가 비어 있습니다.");
         return result;

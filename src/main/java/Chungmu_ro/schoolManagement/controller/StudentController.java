@@ -1,11 +1,9 @@
 package Chungmu_ro.schoolManagement.controller;
 
-import Chungmu_ro.schoolManagement.domain.Assignment;
-import Chungmu_ro.schoolManagement.domain.Course;
-import Chungmu_ro.schoolManagement.domain.HandIn;
-import Chungmu_ro.schoolManagement.domain.Student;
+import Chungmu_ro.schoolManagement.domain.*;
 import Chungmu_ro.schoolManagement.form.HandInForm;
 import Chungmu_ro.schoolManagement.form.LoginForm;
+import Chungmu_ro.schoolManagement.form.QaForm;
 import Chungmu_ro.schoolManagement.service.MemberService;
 import Chungmu_ro.schoolManagement.service.StudentService;
 import lombok.RequiredArgsConstructor;
@@ -18,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import javax.print.DocFlavor;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -138,7 +137,7 @@ public class StudentController {
         return "student/assignment";
     }
 
-    @GetMapping(value = "/student/{cid}/{aid}/detail")
+    @GetMapping(value = "/student/{cid}/{aid}/assignmentDetail")
     public String assignmentDetail(Model model,HttpSession session,@PathVariable("cid") Integer cid, @PathVariable("aid") Long aid) {
         Course course = null;
         try {
@@ -163,7 +162,7 @@ public class StudentController {
         }
         return "student/assignmentInfo";
     }
-    @GetMapping(value = "/student/{cid}/{aid}/update")
+    @GetMapping(value = "/student/{cid}/{aid}/assignmentUpdate")
     public String assignmentUpdateForm(Model model, HttpSession session,@PathVariable("cid") Integer cid, @PathVariable("aid") Long aid) {
         Course course = null;
         HandIn handIn =null;
@@ -186,14 +185,21 @@ public class StudentController {
         catch (Exception e) {
             model.addAttribute("message",e.getMessage());
             model.addAttribute("alertClass","alert-danger");
+            return "student/assignmentInfo";
         }
          return "student/assignmentUpdate";
     }
-    @GetMapping(value = "/student/{cid}/{aid}/fileInsert")
+    @PostMapping(value = "/student/{cid}/{aid}/fileInsert")
     public String assignmentUpdate(@RequestParam("file") MultipartFile files,Model model, HttpSession session,@PathVariable("cid") Integer cid, @PathVariable("aid") Long aid) {
         try {
+            Course course =studentService.findCourse(cid);
+            model.addAttribute("course",course);
+            Assignment assignment = studentService.findAssignment(aid);
+            model.addAttribute("assignment",assignment);
+
             Student user = (Student) session.getAttribute("user");
             HandIn handIn = studentService.findHandIn(user.getSid(),cid, aid);
+            model.addAttribute("handIn",handIn);
             if (files.isEmpty()) {
                 studentService.updateHandIn(handIn.getHid(),"","","");
             } else {
@@ -208,7 +214,7 @@ public class StudentController {
                 do {
                     int leftLimit = 48; // numeral '0'
                     int rightLimit = 122; // letter 'z'
-                    int targetStringLength = 10;
+                    int targetStringLength = 32;
                     Random random = new Random();
 
                     destinationFileName = random.ints(leftLimit, rightLimit + 1)
@@ -225,8 +231,9 @@ public class StudentController {
         }catch(Exception e){
             model.addAttribute("message",e.getMessage());
             model.addAttribute("alertClass","alert-danger");
+            return "student/assignmentUpdate";
         }
-        return "student/assignmentUpdate";
+        return "student/assignmentInfo";
 
     }
     @RequestMapping("/student/fileDown/{hid}")
@@ -289,5 +296,117 @@ public class StudentController {
             model.addAttribute("message",e.getMessage());
             model.addAttribute("alertClass","alert-danger");
         }
+    }
+    @GetMapping(value = "/student/{cid}/attendance")
+    public String attendanceList(Model model,HttpSession session, @PathVariable("cid") Integer cid) {
+        Course course = null;
+        try {
+            course =studentService.findCourse(cid);
+
+            model.addAttribute("course",course);
+
+            Student user = (Student) session.getAttribute("user");
+
+            List<Attendance> attendances = studentService.getMyAttendanceList(cid, user.getSid());
+
+            model.addAttribute("attendances",attendances);
+        }
+        catch (Exception e) {
+            model.addAttribute("message",e.getMessage());
+            model.addAttribute("alertClass","alert-danger");
+        }
+        return "student/attendance";
+    }
+    @GetMapping(value = "/student/{cid}/qa")
+    public String qaList(Model model,HttpSession session, @PathVariable("cid") Integer cid) {
+        Course course = null;
+
+        try {
+            course =studentService.findCourse(cid);
+
+            model.addAttribute("course",course);
+
+            Student user = (Student) session.getAttribute("user");
+
+            List<QA> qas = studentService.getQAList(cid);
+
+            model.addAttribute("qas",qas);
+        }
+        catch (Exception e) {
+            model.addAttribute("message",e.getMessage());
+            model.addAttribute("alertClass","alert-danger");
+        }
+        return "student/qa";
+    }
+    @GetMapping(value = "/student/{cid}/{qid}/qaDetail")
+    public String qaDetail(Model model,HttpSession session, @PathVariable("cid") Integer cid, @PathVariable("qid") Long qid) {
+        Course course = null;
+
+        try {
+            course =studentService.findCourse(cid);
+
+            model.addAttribute("course",course);
+
+            Student user = (Student) session.getAttribute("user");
+
+            QA qa = studentService.findQA(qid);
+
+            model.addAttribute("qa",qa);
+        }
+        catch (Exception e) {
+            model.addAttribute("message",e.getMessage());
+            model.addAttribute("alertClass","alert-danger");
+        }
+        return "student/qaDetail";
+    }
+    @GetMapping(value = "/student/{cid}/{qid}/qaUpdate")
+    public String qaUpdateForm(Model model,HttpSession session, @PathVariable("cid") Integer cid, @PathVariable("qid") Long qid){
+        Course course = null;
+        try {
+            QaForm qaForm = new QaForm();
+
+            model.addAttribute(qaForm);
+
+            course =studentService.findCourse(cid);
+
+            model.addAttribute("course",course);
+
+            Student user = (Student) session.getAttribute("user");
+
+            QA qa = studentService.findQA(qid);
+
+            model.addAttribute("qa",qa);
+
+        }
+        catch (Exception e) {
+            model.addAttribute("message",e.getMessage());
+            model.addAttribute("alertClass","alert-danger");
+        }
+        return "student/qaForm";
+    }
+    @PostMapping(value = "/student/{cid}/{qid}/qaUpdate")
+    public String qaUpdate(Model model,HttpSession session, @PathVariable("cid") Integer cid, @PathVariable("qid") Long qid){
+        Course course = null;
+        try {
+            QaForm qaForm = new QaForm();
+
+            model.addAttribute(qaForm);
+
+            course =studentService.findCourse(cid);
+
+            model.addAttribute("course",course);
+
+            Student user = (Student) session.getAttribute("user");
+
+            QA qa = studentService.findQA(qid);
+
+            model.addAttribute("qa",qa);
+
+        }
+        catch (Exception e) {
+            model.addAttribute("message",e.getMessage());
+            model.addAttribute("alertClass","alert-danger");
+        }
+        return "student/qaForm";
     }
 }

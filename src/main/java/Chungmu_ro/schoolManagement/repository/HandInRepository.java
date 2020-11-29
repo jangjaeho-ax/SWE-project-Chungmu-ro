@@ -25,6 +25,7 @@ public class HandInRepository {
             em.persist(handIn);
         else
             em.merge(handIn);
+        em.flush();
     }
 
     public Optional<HandIn> findByHid(Long hid){

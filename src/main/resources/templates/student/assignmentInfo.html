@@ -39,14 +39,13 @@
         <label class ="label lable-info">제출 파일</label>
         <p>
             <a th:unless ="${handIn.fileName == ''}"
-               th:href="@{student/fileDown/{hid} (hid =${handIn.hid})}">[[${handIn.fileOriginName}]]</a>
+               th:href="@{/student/fileDown/{hid} (hid =${handIn.hid})}">[[${handIn.fileOriginName}]]</a>
         </p>
-    <div>
-        <input type ="submit" th:value ="목록"
-            th:formaction="@{/student/{cid}/assignment (cid=${course.cid})}">
-        <input type ="submit" th:value ="수정"
-               th:formaction="@{/student/{cid}/{aid}/update (cid=${course.cid}, aid=${assignment.aid})}">
-    </div>
+
+        <a href="#"  class="btn btn-primary" role="button"
+           th:href="@{/student/{cid}/assignment (cid=${course.cid})}">목록</a>
+        <a href="#"  class="btn btn-primary" role="button"
+            th:href="@{/student/{cid}/{aid}/assignmentUpdate (cid=${course.cid}, aid=${assignment.aid})}">수정</a>
     <div th:if="${message}" th:text="${message}" th:class="${'alert ' + alertClass}"/>
     <div th:replace="fragments/footer :: footer" />
 </div> <!-- /container -->

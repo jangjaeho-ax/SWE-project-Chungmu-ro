@@ -25,6 +25,7 @@ public class EnlistRepository {
             em.persist(enlist);
         else
             em.merge(enlist);
+        em.flush();
     }
 
     public List<Enlist> findBySid(Integer sid){

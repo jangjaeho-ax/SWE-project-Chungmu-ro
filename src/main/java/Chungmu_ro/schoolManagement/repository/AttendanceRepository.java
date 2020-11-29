@@ -2,6 +2,7 @@ package Chungmu_ro.schoolManagement.repository;
 
 import Chungmu_ro.schoolManagement.domain.Assignment;
 import Chungmu_ro.schoolManagement.domain.Attendance;
+import Chungmu_ro.schoolManagement.domain.Enlist;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -25,15 +26,22 @@ public class AttendanceRepository {
             em.persist(attendance);
         else
             em.merge(attendance);
+        em.flush();
     }
 
     public Optional<Attendance> findByAid(Long aid){
         return Optional.ofNullable(em.find(Attendance.class, aid));
-
     }
     public List<Attendance> findAll(){
         return em.createQuery("select a from Attendance a", Attendance.class).getResultList();
     }
+    public List<Attendance> findByEid(Long eid){
+        return em.createQuery("select a from Attendance a join a.enlist e " +
+                "on e.eid = :eid", Attendance.class)
+                .setParameter("eid", eid)
+                .getResultList();
+    }
+
     public void delete(Attendance attendance){
         attendance.setEnlist(null);
         em.remove(attendance);

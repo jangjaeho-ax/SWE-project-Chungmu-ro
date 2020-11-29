@@ -26,6 +26,7 @@ public class TutoringRepository {
             em.persist(tutoring);
         else
             em.merge(tutoring);
+        em.flush();
     }
 
     public Optional<Tutoring> findByGid(Long tid){

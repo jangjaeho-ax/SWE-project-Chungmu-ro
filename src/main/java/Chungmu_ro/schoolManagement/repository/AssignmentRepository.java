@@ -31,6 +31,7 @@ public class AssignmentRepository {
             em.persist(assignment);
         else
             em.merge(assignment);
+        em.flush();
     }
 
     public Optional<Assignment> findByAid(Long aid){
