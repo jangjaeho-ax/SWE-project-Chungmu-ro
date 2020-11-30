@@ -10,15 +10,15 @@ public class QA {
     @Id @Column(name ="QaID") @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long qid;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name ="StudentID")
     private Student student;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name ="CourseID")
     private Course course;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name ="ProfessorID")
     private Professor professor;
 
@@ -54,7 +54,6 @@ public class QA {
         if(this.student != null)
             this.student.getQaList().remove(this);
         this.student = student;
-        student.getQaList().add(this);
     }
 
     public void setCourse(Course course) {

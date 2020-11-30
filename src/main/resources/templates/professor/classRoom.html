@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments/header :: header">
+    <title>충무로 3번 출구</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+</head>
+<body>
+<div class="container">
+    <div th:replace="fragments/bodyHeader :: bodyHeader" />
+    <div class="jumbotron">
+        <h1 th:text = "${course.courseName}+${course.cid}"/>
+        <p class="lead" th:text ="${session.user.sid}"/>
+        <p>
+            <a class="btn btn-lg btn-secondary" href ="#" th:href="@{/professor/{cid}/assignment
+                (cid=${course.cid})}">과제</a>
+            <a class="btn btn-lg btn-secondary" href ="#" th:href="@{/professor/{cid}/attendance
+                (cid=${course.cid})}">출석</a>
+            <a class="btn btn-lg btn-secondary" href ="#" th:href="@{/professor/{cid}/qa
+                (cid=${course.cid})}">QA</a>
+            <a class="btn btn-lg btn-secondary" href ="#" th:href="@{/professor/{cid}/tutoring
+                (cid=${course.cid})}">>튜터링</a>
+        </p>
+    </div>
+    <div th:if="${message}" th:text="${message}" th:class="${'alert ' + alertClass}"/>
+    <div th:replace="fragments/footer :: footer" />
+</div> <!-- /container -->
+</body>
+</html>

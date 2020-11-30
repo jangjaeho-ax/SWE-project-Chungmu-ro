@@ -9,31 +9,27 @@
     <div th:replace="fragments/bodyHeader :: bodyHeader" />
 
     <div class="jumbotron">
-        <h1 th:text = "${course.courseName}+${course.cid}"/>
-        <p class="lead">QA 페이지</p>
+        <h1>메인 페이지</h1>
+        <p class="lead">강의실 선택</p>
     </div>
     <table class="table table-striped">
         <thead>
         <tr>
             <th>#</th>
-            <th>질문자</th>
-            <th>질문 날짜</th>
+            <th>강의이름</th>
             <th></th>
         </tr>
         </thead>
         <tbody>
-        <tr th:each="qa : ${qas}">
-            <td th:text="${qaStat.index}"></td>
-            <td th:text="${qa.student.sid}"></td>
-            <td th:text="${qa.dateTime}"></td>
+        <tr th:each="course : ${courses}">
+            <td th:text="${course.cid}"></td>
+            <td th:text="${course.courseName}"></td>
             <td>
-                <a href="#" th:href="@{/student/{cid}/{qid}/qaDetail (cid=${course.cid}, qid=${qa.qid})}"
-                   class="btn btn-primary" role="button">자세히 보기</a>
+                <a href="#" th:href="@{/student/{id}/room (id=${course.cid})}"
+                   class="btn btn-primary" role="button">선택</a>
             </td>
         </tr>
         </tbody>
-        <a href="#"  class="btn btn-primary" role="button"
-           th:href="@{/student/{cid}/qaAddForm (cid=${course.cid})}">추가</a>
     </table>
     <div th:if="${message}" th:text="${message}" th:class="${'alert ' + alertClass}"/>
     <div th:replace="fragments/footer :: footer" />

@@ -10,11 +10,11 @@ public class Tutoring {
     @Id @Column(name ="TutoringID") @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long tid;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "StudentID")
     private Student student;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "ProfessorID")
     private Professor professor;
 

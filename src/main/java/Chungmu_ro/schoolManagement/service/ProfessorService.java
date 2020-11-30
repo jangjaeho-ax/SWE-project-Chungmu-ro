@@ -25,25 +25,37 @@ public class ProfessorService {
     private HandInRepository handInRepository;
     private QARepository qaRepository;
     private TutoringRepository tutoringRepository;
+    private EnlistRepository enlistRepository;
+    private CourseRepository courseRepository;
 
     public Professor professorLogin(String id, String pw) {
-        Professor professor = professorRepository.findByAccountId(id).get();
-        if(professor ==null){
+        Optional<Professor> professor = professorRepository.findByAccountId(id);
+        if(!professor.isPresent()){
             throw new  IllegalStateException("아이디가 틀림");
         }
-        if(professor.getAccountPw().equals(pw) ==false) {
+        else if(!professor.get().getAccountPw().equals(pw)) {
             throw new IllegalStateException("비밀번호가 틀림");
         }
-        return professor;
+        return professor.get();
     }
 
-    public List<Course> getCourseList(Professor professor)  {
+    @Transactional
+    public List<Course> getCourseList(Professor professor) throws Exception{
         //자신이 수강하고 있는 전체 강의 정보를 가져오는 함수, 학생 엔티티 즉 유저 엔티티를 입력값으로 받는다.
-        List<Course> result = professor.getCourseList();
-        if(result.isEmpty())
-            throw new NoSuchElementException("담당하고 있는 강의가 없습니다.");
-        return result;
+        // studentRepository.init();
+        List<Course> courses = courseRepository.findByPid(professor.getPid());
+        if (courses.isEmpty())//비어있는 경우
+            throw new NoSuchElementException("담당하고 있는 강의가 없습니다.");//예외 발생
+        return courses;
     }
+
+    public Course findCourse(Integer cid) throws Exception{
+        Course course = courseRepository.findByCid(cid).get();
+        if(course ==null)
+            throw new NoSuchElementException("선택한 강의가 없습니다.");//예외 발생
+        return course;
+    }
+
     //***학생 관련 함수***
     public List<Student> getStudentList(Course course){
         List<Student> result =new ArrayList<>();
@@ -56,11 +68,21 @@ public class ProfessorService {
         return result;
     }
     //***과제 관련 함수***
-    public List<Assignment> getAssignmentList(Course course){
-        List<Assignment> result =course.getAssignmentList();
-        if(result.isEmpty())
-            throw new NoSuchElementException("등록된 과제가 없습니다.");
-        return result;
+    public List<Assignment> getAssignmentList(Course course) throws  Exception{
+        //과제 리스트를 가져오는 함수, 과제 엔티티를 입력으로 받음
+        if(course == null)
+            throw new NoSuchElementException("선택한 강의가 없습니다.");//예외 발생
+        //List<Assignment> assignmentList = course.getAssignmentList();
+        List<Assignment> assignmentList = assignmentRepository.findByCid(course.getCid());
+        if(assignmentList.isEmpty())
+            throw new NoSuchElementException("선택한 과제가 없습니다.");//예외 발생
+        return assignmentList;
+    }
+    public Assignment findAssignment(Long aid) throws  Exception {
+        Optional<Assignment> assignment = assignmentRepository.findByAid(aid);
+        if(!assignment.isPresent())
+            throw new NoSuchElementException("선택한 과제가 없습니다.");//예외 발생
+        return assignment.get();
     }
     public void addAssignment(Course course,Assignment assignment){
         //과제 추가 수정 함수
@@ -75,6 +97,14 @@ public class ProfessorService {
         if(assignment == null)
             throw new NoSuchElementException("추가하고자 하는 과제가 없습니다.");
         assignmentRepository.save(assignment);
+    }
+    public List<HandIn> findHandInList(Long aid) {
+        //해당 강좌에서 해당 과제의 모든 학생의 제출 정보를 가져오는 함수
+        //제출 엔티티를 통해 저장된 점수를 얻을 수 있다.
+        List<HandIn> handInList = handInRepository.findByAid(aid);
+        if(handInList.isEmpty())
+            throw new NoSuchElementException("제출 정보가 없습니다.");
+        return handInList;
     }
     public void subAssignment(Assignment assignment){
         assignmentRepository.delete(assignment);

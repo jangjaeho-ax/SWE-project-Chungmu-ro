@@ -9,7 +9,7 @@ public class Course {
     @Id @Column(name = "CourseID")
     private Integer cid;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name ="ProfessorID")
     private Professor professor;
 

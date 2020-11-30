@@ -33,14 +33,14 @@ public class HandInRepository {
 
     }
     public List<HandIn> findByEid(Long eid){
-        return em.createQuery("select h from HandIn h join h.enlist e" +
+        return em.createQuery("select h from HandIn h join h.enlist e " +
                 "on e.eid = :eid",HandIn.class)
                 .setParameter("eid",eid)
                 .getResultList();
 
     }
     public List<HandIn> findByAid(Long aid){
-        return em.createQuery("select h from HandIn h join h.assignment a" +
+        return em.createQuery("select h from HandIn h join h.assignment a " +
                 "on a.aid = :aid",HandIn.class)
                 .setParameter("aid",aid)
                 .getResultList();

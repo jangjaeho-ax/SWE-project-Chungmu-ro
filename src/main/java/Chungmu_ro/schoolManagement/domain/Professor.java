@@ -13,7 +13,6 @@ public class Professor extends Member {
     @Column(name = "ProfessorID")
     private int pid;
 
-
     @OneToMany(mappedBy = "professor",fetch = FetchType.LAZY)
     private List<QA> qaList= new ArrayList<>();
 

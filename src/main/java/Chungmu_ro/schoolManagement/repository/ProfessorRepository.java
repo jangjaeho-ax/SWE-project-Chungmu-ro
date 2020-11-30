@@ -34,14 +34,16 @@ public class ProfessorRepository {
 
     }
     public List<Professor> findAll(){
-        return em.createQuery("select p from Professor P",Professor.class).getResultList();
+        return em.createQuery("select p from Professor p",Professor.class).getResultList();
     }
 
     public Optional<Professor> findByAccountId(String AccountId){
-        return  em.createQuery("select p from Professor p where p.AccountId =:AccountId",Professor.class)
-                .setParameter("AccountId",AccountId)
+        return  em.createQuery("select p from Professor p where p.AccountId = :AccountId"
+                ,Professor.class).setParameter("AccountId",AccountId)
                 .getResultList().stream().findAny();
     }
+
+
 //    public ProfessorRepository(EntityManager em) {
 //        this.em = em;
 //    }

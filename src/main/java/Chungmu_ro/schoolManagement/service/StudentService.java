@@ -2,6 +2,7 @@ package Chungmu_ro.schoolManagement.service;
 
 import Chungmu_ro.schoolManagement.domain.*;
 import Chungmu_ro.schoolManagement.exception.TimeOutException;
+import Chungmu_ro.schoolManagement.form.QaForm;
 import Chungmu_ro.schoolManagement.repository.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.jpa.repository.Query;
@@ -46,16 +47,14 @@ public class StudentService {
     }
     @Transactional
     public Student studentLogin(String id, String pw) throws Exception{
-        if(studentRepository.findByAccountId(id).isEmpty()){
+        Optional<Student> student = studentRepository.findByAccountId(id);
+        if(!student.isPresent()){
             throw new IllegalStateException("아이디가 틀림");
         }
-        else {
-            Student student = studentRepository.findByAccountId(id).get();
-            if (student.getAccountPw().equals(pw) == false) {
-                throw new IllegalStateException("비밀번호가 틀림");
-            }
-            return student;
+        else if (student.get().getAccountPw().equals(pw) == false) {
+            throw new IllegalStateException("비밀번호가 틀림");
         }
+        return student.get();
     }
     //***강의실 선택 함수***
     @Transactional
@@ -242,17 +241,28 @@ public class StudentService {
             throw new NoSuchElementException("선택한 QA 정보가 없습니다.");
         return qa.get();
     }
-    public void addQA(Course course,Student student, QA qa)  throws Exception{
+    public QA updateQA(Long qid, QaForm qaForm) throws  Exception{
+        QA qa = findQA(qid);
+        qa.setQuestion(qaForm.getQuestion());
+        qa.setAnswer(qa.getAnswer());
+        qa.setDateTime(LocalDateTime.now());
+        qaRepository.save(qa);
+        return qa;
+    }
+    public QA addQA(Course course,Student student)  throws Exception{
         //QA 수정 등록 함수, course
-        Professor professor = course.getProfessor();
-        if(professor ==null)
+        QA qa = new QA();
+        Professor professor =course.getProfessor();
+        if(professor == null)
             throw new NoSuchElementException("강의를 담당하는 교수님이 없습니다.");
         qa.setStudent(student);
         qa.setCourse(course);
         qa.setProfessor(professor);
         qa.setDateTime(LocalDateTime.now());
-        professorRepository.save(professor);
+        qa.setAnswer("");
+        qa.setQuestion("");
         qaRepository.save(qa);
+        return qa;
     }
 
     //***출석 관련 함수

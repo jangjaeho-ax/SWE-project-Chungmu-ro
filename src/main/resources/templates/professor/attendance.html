@@ -10,30 +10,25 @@
 
     <div class="jumbotron">
         <h1 th:text = "${course.courseName}+${course.cid}"/>
-        <p class="lead">QA 페이지</p>
+        <p class="lead">출석 페이지</p>
     </div>
     <table class="table table-striped">
         <thead>
         <tr>
             <th>#</th>
-            <th>질문자</th>
-            <th>질문 날짜</th>
+            <th>날짜</th>
+            <th>출석 상태</th>
             <th></th>
         </tr>
         </thead>
         <tbody>
-        <tr th:each="qa : ${qas}">
-            <td th:text="${qaStat.index}"></td>
-            <td th:text="${qa.student.sid}"></td>
-            <td th:text="${qa.dateTime}"></td>
-            <td>
-                <a href="#" th:href="@{/student/{cid}/{qid}/qaDetail (cid=${course.cid}, qid=${qa.qid})}"
-                   class="btn btn-primary" role="button">자세히 보기</a>
-            </td>
+        <tr th:each="attendance : ${attendances}">
+            <td th:text="${attendanceStat.index}"></td>
+            <td th:text="${attendance.date}"></td>
+            <td th:text="${attendance.attendanceStatus}"></td>
         </tr>
         </tbody>
-        <a href="#"  class="btn btn-primary" role="button"
-           th:href="@{/student/{cid}/qaAddForm (cid=${course.cid})}">추가</a>
+
     </table>
     <div th:if="${message}" th:text="${message}" th:class="${'alert ' + alertClass}"/>
     <div th:replace="fragments/footer :: footer" />

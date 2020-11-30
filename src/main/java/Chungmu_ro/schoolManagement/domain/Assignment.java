@@ -15,7 +15,7 @@ public class Assignment {
     @Id @Column(name ="AssignmentID") @GeneratedValue(strategy =  GenerationType.IDENTITY)
     private Long aid;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "CourseID")
     private Course course;
 

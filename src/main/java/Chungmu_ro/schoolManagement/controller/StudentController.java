@@ -359,13 +359,10 @@ public class StudentController {
         }
         return "student/qaDetail";
     }
-    @GetMapping(value = "/student/{cid}/{qid}/qaUpdate")
+    @GetMapping(value = "/student/{cid}/{qid}/qaUpdateForm")
     public String qaUpdateForm(Model model,HttpSession session, @PathVariable("cid") Integer cid, @PathVariable("qid") Long qid){
         Course course = null;
         try {
-            QaForm qaForm = new QaForm();
-
-            model.addAttribute(qaForm);
 
             course =studentService.findCourse(cid);
 
@@ -377,6 +374,12 @@ public class StudentController {
 
             model.addAttribute("qa",qa);
 
+            QaForm qaForm = new QaForm();
+            qaForm.setQid(qa.getQid());
+            qaForm.setQuestion(qa.getQuestion());
+            qaForm.setQuestion(qa.getAnswer());
+
+            model.addAttribute(qaForm);
         }
         catch (Exception e) {
             model.addAttribute("message",e.getMessage());
@@ -385,10 +388,9 @@ public class StudentController {
         return "student/qaForm";
     }
     @PostMapping(value = "/student/{cid}/{qid}/qaUpdate")
-    public String qaUpdate(Model model,HttpSession session, @PathVariable("cid") Integer cid, @PathVariable("qid") Long qid){
+    public String qaUpdate(QaForm qaForm,Model model,HttpSession session, @PathVariable("cid") Integer cid, @PathVariable("qid") Long qid){
         Course course = null;
         try {
-            QaForm qaForm = new QaForm();
 
             model.addAttribute(qaForm);
 
@@ -398,15 +400,72 @@ public class StudentController {
 
             Student user = (Student) session.getAttribute("user");
 
-            QA qa = studentService.findQA(qid);
+            QA qa = studentService.updateQA(qid, qaForm);
 
-            model.addAttribute("qa",qa);
+            List<QA> qas = studentService.getQAList(cid);
+
+            model.addAttribute("qas",qas);
 
         }
         catch (Exception e) {
             model.addAttribute("message",e.getMessage());
             model.addAttribute("alertClass","alert-danger");
         }
-        return "student/qaForm";
+        return "student/qa";
     }
+    @PostMapping(value = "/student/{cid}/qaUpdate")
+    public String qaUpdate(QaForm qaForm,Model model,HttpSession session, @PathVariable("cid") Integer cid){
+        Course course = null;
+        try {
+
+            model.addAttribute(qaForm);
+
+            course =studentService.findCourse(cid);
+
+            model.addAttribute("course",course);
+
+            Student user = (Student) session.getAttribute("user");
+
+            QA qa = studentService.updateQA(qaForm.getQid(), qaForm);
+
+
+            List<QA> qas = studentService.getQAList(cid);
+
+            model.addAttribute("qas",qas);
+
+        }
+        catch (Exception e) {
+            model.addAttribute("message",e.getMessage());
+            model.addAttribute("alertClass","alert-danger");
+        }
+        return "student/qa";
+    }
+    @GetMapping(value = "/student/{cid}/qaAddForm")
+    public String qaAddForm(Model model,HttpSession session, @PathVariable("cid") Integer cid){
+        Course course = null;
+        try {
+
+            course =studentService.findCourse(cid);
+
+            model.addAttribute("course",course);
+
+            Student user = (Student) session.getAttribute("user");
+
+            QA qa = studentService.addQA(course, user);
+
+            QaForm qaForm = new QaForm();
+            qaForm.setQid(qa.getQid());
+            qaForm.setQuestion(qa.getQuestion());
+            qaForm.setAnswer(qa.getAnswer());
+
+            model.addAttribute(qaForm);
+            model.addAttribute("qa",qa);
+        }
+        catch (Exception e) {
+            model.addAttribute("message",e.getMessage());
+            model.addAttribute("alertClass","alert-danger");
+        }
+        return "student/qaAddForm";
+    }
+
 }

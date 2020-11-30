@@ -11,10 +11,10 @@ public class Enlist {
     @Id @Column(name ="EnlistID") @GeneratedValue(strategy =  GenerationType.IDENTITY)
     private Long eid;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name="StudentID")
     private Student student;
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name="CourseID")
     private Course course;
 

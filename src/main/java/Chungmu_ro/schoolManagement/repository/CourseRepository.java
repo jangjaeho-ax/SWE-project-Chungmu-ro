@@ -1,6 +1,7 @@
 package Chungmu_ro.schoolManagement.repository;
 
 import Chungmu_ro.schoolManagement.domain.Course;
+import Chungmu_ro.schoolManagement.domain.Professor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
@@ -30,7 +31,18 @@ public class CourseRepository {
 
     public Optional<Course> findByCid(Integer cid){
         return Optional.ofNullable(em.find(Course.class, cid));
-
+    }
+    public List<Course> findByPid(Integer pid){
+        return em.createQuery("select c from Course c join c.professor p " +
+                "on p.pid = :pid", Course.class)
+                .setParameter("pid", pid)
+                .getResultList();
+    }
+    public Professor getProfessor(Integer cid) {
+        Course firstResult = (Course)em.createQuery("select c from Course c " +
+                "join c.professor p on c.cid =:cid")
+                .setParameter("cid", cid).getResultStream().findAny().get();
+        return firstResult.getProfessor();
     }
     public List<Course> findAll(){
         return em.createQuery("select a from Course a",Course.class).getResultList();
