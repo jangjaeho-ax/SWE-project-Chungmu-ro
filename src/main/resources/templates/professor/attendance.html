@@ -15,7 +15,7 @@
     <table class="table table-striped">
         <thead>
         <tr>
-            <th>#</th>
+            <th>아이디</th>
             <th>날짜</th>
             <th>출석 상태</th>
             <th></th>
@@ -23,9 +23,13 @@
         </thead>
         <tbody>
         <tr th:each="attendance : ${attendances}">
-            <td th:text="${attendanceStat.index}"></td>
+            <td th:text="${attendance.enlist.student.sid}"></td>
             <td th:text="${attendance.date}"></td>
             <td th:text="${attendance.attendanceStatus}"></td>
+            <td>
+            <a href="#" th:href="@{/professor/{cid}/{aid}/attendanceUpdate (cid =${course.cid}, aid=${attendance.aid})}"
+               class="btn btn-primary" role="button">수정</a>
+            </td>
         </tr>
         </tbody>
 

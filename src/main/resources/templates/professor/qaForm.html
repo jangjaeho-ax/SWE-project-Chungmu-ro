@@ -12,9 +12,9 @@ border-color: #bd2130;
     <form role="form" action="qaUpdate" th:object="${qaForm}"
           method="post">
         <div class="form-group">
-            <label th:for="question">질문</label>
-            <input type="text" th:field="*{question}" class="form-control"
-                   th:value ="*{question}"/>
+            <label th:for="question">답변</label>
+            <input type="text" th:field="*{answer}" class="form-control"
+                   th:value ="*{answer}"/>
         </div>
         <button type="submit" class="btn btn-primary">Submit</button>
     </form>

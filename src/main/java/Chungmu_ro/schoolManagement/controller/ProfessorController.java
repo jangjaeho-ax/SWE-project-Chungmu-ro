@@ -1,27 +1,31 @@
 package Chungmu_ro.schoolManagement.controller;
 
 import Chungmu_ro.schoolManagement.domain.*;
-import Chungmu_ro.schoolManagement.form.LoginForm;
+import Chungmu_ro.schoolManagement.form.*;
 import Chungmu_ro.schoolManagement.service.ProfessorService;
-import Chungmu_ro.schoolManagement.service.StudentService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
+import java.io.*;
+import java.sql.Date;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
 @Controller
+@Slf4j
 @RequiredArgsConstructor
 public class ProfessorController {
+
     private final ProfessorService professorService;
 
     @GetMapping(value = "/professor/login")
@@ -40,7 +44,9 @@ public class ProfessorController {
         try {
             Professor professor = professorService.professorLogin(id, passWord);
             session.setAttribute("user",professor);
+            session.setAttribute("authority", "professor");
         }catch(Exception e){
+            log.error(e.getMessage());
             model.addAttribute("message",e.getMessage());
             model.addAttribute("alertClass","alert-danger");
             return "professor/loginForm";
@@ -94,6 +100,7 @@ public class ProfessorController {
         catch (Exception e) {
             model.addAttribute("message",e.getMessage());
             model.addAttribute("alertClass","alert-danger");
+            return "professor/classRoom";
         }
         return "professor/assignment";
     }
@@ -119,7 +126,404 @@ public class ProfessorController {
         catch (Exception e) {
             model.addAttribute("message",e.getMessage());
             model.addAttribute("alertClass","alert-danger");
+            return "professor/assignment";
         }
         return "professor/assignmentInfo";
+    }
+    @GetMapping(value = "/professor/{cid}/{aid}/assignmentUpdate")
+    public String assignmentUpdateForm(Model model, HttpSession session,@PathVariable("cid") Integer cid, @PathVariable("aid") Long aid) {
+        Course course = null;
+        try {
+
+            AssignmentForm assignmentForm = new AssignmentForm();
+
+            course =professorService.findCourse(cid);
+
+            Professor user = (Professor) session.getAttribute("user");
+
+            model.addAttribute("course",course);
+
+            Assignment assignment = professorService.findAssignment(aid);
+
+            model.addAttribute("assignment",assignment);
+
+            assignmentForm.setAid(assignment.getAid());
+            assignmentForm.setStarDate(assignment.getStarDate());
+            assignmentForm.setDueDate(assignment.getDueDate());
+            assignmentForm.setTitle(assignment.getTitle());
+            assignmentForm.setPerfectScore(assignment.getPerfectScore());
+            assignmentForm.setDescription(assignment.getDescription());
+
+            model.addAttribute("assignmentForm",assignmentForm);
+
+
+        }
+        catch (Exception e) {
+            List<HandIn> handIns= professorService.findHandInList(aid);
+            model.addAttribute("handIns",handIns);
+            model.addAttribute("message",e.getMessage());
+            model.addAttribute("alertClass","alert-danger");
+            return "professor/assignmentDetail";
+        }
+        return "professor/assignmentForm";
+    }
+    @PostMapping(value = "/professor/{cid}/{aid}/assignmentUpdate")
+    public String assignmentUpdate(Model model,AssignmentForm assignmentForm, HttpSession session,@PathVariable("cid") Integer cid, @PathVariable("aid") Long aid) {
+        Course course = null;
+        try {
+
+            course =professorService.findCourse(cid);
+
+            Professor user = (Professor) session.getAttribute("user");
+
+            model.addAttribute("course",course);
+
+            Assignment assignment = professorService.findAssignment(aid);
+
+            assignment.setTitle(assignmentForm.getTitle());
+            assignment.setPerfectScore(assignmentForm.getPerfectScore());
+            assignment.setStarDate(assignmentForm.getStarDate());
+            assignment.setDueDate(assignmentForm.getDueDate());
+            assignment.setDescription(assignmentForm.getDescription());
+
+            professorService.setAssignment(course,assignment);
+
+            model.addAttribute("assignment",assignment);
+
+            List<HandIn> handIns= professorService.findHandInList(aid);
+            model.addAttribute("handIns",handIns);
+        }
+        catch (Exception e) {
+            List<HandIn> handIns= professorService.findHandInList(aid);
+            model.addAttribute("handIns",handIns);
+            model.addAttribute("message",e.getMessage());
+            model.addAttribute("alertClass","alert-danger");
+            return "professor/assignmentDetail";
+        }
+        return "professor/assignmentDetail";
+    }
+    @GetMapping(value = "/student/{cid}/assignmentAddForm")
+    public String assignmentAddForm(Model model, HttpSession session,@PathVariable("cid") Integer cid) {
+        Course course = null;
+        try {
+
+            AssignmentForm assignmentForm = new AssignmentForm();
+
+            course = professorService.findCourse(cid);
+
+            Professor user = (Professor) session.getAttribute("user");
+
+            model.addAttribute("course", course);
+
+            Assignment assignment = new Assignment(course, "", LocalDateTime.now(),
+                    LocalDateTime.now(), 0, "");
+
+            model.addAttribute("assignment", assignment);
+
+            assignmentForm.setAid(assignment.getAid());
+            assignmentForm.setStarDate(assignment.getStarDate());
+            assignmentForm.setDueDate(assignment.getDueDate());
+            assignmentForm.setTitle(assignment.getTitle());
+            assignmentForm.setPerfectScore(assignment.getPerfectScore());
+            assignmentForm.setDescription(assignment.getDescription());
+
+            model.addAttribute("assignmentForm", assignmentForm);
+
+
+        } catch (Exception e) {
+            model.addAttribute("message", e.getMessage());
+            model.addAttribute("alertClass", "alert-danger");
+            return "recirect:/professor/assignment";
+        }
+        return "professor/assignmentForm";
+    }
+    @GetMapping(value = "/professor/{cid}/{aid}/{hid}/updateScore")
+    public String scoreUpdateForm(Model model, HttpSession session,@PathVariable("cid") Integer cid, @PathVariable("aid") Long aid, @PathVariable("hid") Long hid) {
+        Course course = null;
+        HandIn handIn =null;
+        try {
+
+            HandInForm handInForm = new HandInForm();
+
+            course =professorService.findCourse(cid);
+
+            Professor user = (Professor) session.getAttribute("user");
+
+            model.addAttribute("course",course);
+
+            Assignment assignment = professorService.findAssignment(aid);
+
+            model.addAttribute("assignment",assignment);
+
+            handIn = professorService.findHandIn(hid);
+
+            model.addAttribute("handIn",handIn);
+            handInForm.setHid(handIn.getHid());
+            handInForm.setScore(handIn.getScore());
+
+
+
+            model.addAttribute("handInForm",handInForm);
+        }
+        catch (Exception e) {
+            List<HandIn> handIns= professorService.findHandInList(aid);
+            model.addAttribute("handIns",handIns);
+            model.addAttribute("message",e.getMessage());
+            model.addAttribute("alertClass","alert-danger");
+            return "professor/assignmentInfo";
+        }
+        return "professor/handInUpdate";
+    }
+    @PostMapping(value = "/professor/{cid}/{aid}/{hid}/updateScore")
+    public String scoreUpdate(Model model, HttpSession session, HandInForm handInForm,
+                              @PathVariable("cid") Integer cid, @PathVariable("aid") Long aid, @PathVariable("hid") Long hid) {
+        Course course = null;
+        HandIn handIn =null;
+        try {
+
+            course =professorService.findCourse(cid);
+
+            Professor user = (Professor) session.getAttribute("user");
+
+            model.addAttribute("course",course);
+
+            Assignment assignment = professorService.findAssignment(aid);
+
+            model.addAttribute("assignment",assignment);
+
+            handIn = professorService.findHandIn(hid);
+
+            handIn.setScore(handInForm.getScore());
+
+            professorService.setHandIn(handIn);
+
+            model.addAttribute("handIn",handIn);
+
+            List<HandIn> handIns= professorService.findHandInList(aid);
+            model.addAttribute("handIns",handIns);
+
+        }
+        catch (Exception e) {
+            List<HandIn> handIns= professorService.findHandInList(aid);
+            model.addAttribute("handIns",handIns);
+            model.addAttribute("message",e.getMessage());
+            model.addAttribute("alertClass","alert-danger");
+            return "professor/assignmentInfo";
+        }
+        return "professor/assignmentInfo";
+    }
+    @RequestMapping("/professor/fileDown/{hid}")
+    private void fileDown(Model model, @PathVariable("hid") Long hid, HttpServletRequest request, HttpServletResponse response){
+        try {
+            request.setCharacterEncoding("UTF-8");
+            HandIn handIn = professorService.findHandIn(hid);
+
+            String fileUrl = handIn.getFileURL();
+            fileUrl+="\\";
+            String savePath = fileUrl;
+            String fileName = handIn.getFileName();
+
+            String originFileName = handIn.getFileOriginName();
+            InputStream in = null;
+            OutputStream os = null;
+            File file =null;
+            Boolean skip = false;
+            String client ="";
+
+            try{
+                file =new File(savePath,fileName);
+                in = new FileInputStream((file));
+            }catch(FileNotFoundException e){ skip =true;}
+
+            response.reset();
+            response.setContentType("application/octet-stream");
+            response.setHeader("Content-Description","HTML Generated Data");
+
+            if(!skip){
+                if(client.indexOf("Trident") != -1){
+                    response.setHeader("Content-Disposition","attachment; filename=\""+
+                            java.net.URLEncoder.encode(originFileName,"UTF-8").replaceAll("\\+","\\")+"\"");
+                }
+                else if(client.indexOf("MSIE") != -1){
+                    response.setHeader("Content-Disposition","attachment; filename=\""+
+                            java.net.URLEncoder.encode(originFileName,"UTF-8").replaceAll("\\+","\\")+"\"");
+                }
+                else{
+                    response.setHeader("Content-Disposition","attachment; filename=\""+
+                            new String(originFileName.getBytes("UTF-8"),"ISO8859_1")+"\"");
+                    response.setHeader("Content-Type","application/octet-stream; charset=utf-8");
+                }
+                response.setHeader("Content-Length",""+file.length());
+                os= response.getOutputStream();
+                byte b[] = new byte[(int) file.length()];
+                int leng =0;
+                while((leng = in.read(b))>0) {
+                    os.write(b, 0, leng);
+                }
+            }
+            else{
+                response.setContentType("text/html; charset=UTF-8");
+                PrintWriter out =response.getWriter();
+                out.println("<script> alert('파일을 찾을 수 없습니다.'); history.back();</script>");
+                out.flush();
+            }
+
+        } catch (Exception e) {
+            model.addAttribute("message",e.getMessage());
+            model.addAttribute("alertClass","alert-danger");
+        }
+    }
+    @GetMapping(value = "/professor/{cid}/attendance")
+    public String attendanceList(Model model,HttpSession session, @PathVariable("cid") Integer cid) {
+        Course course = null;
+        try {
+            course =professorService.findCourse(cid);
+
+            model.addAttribute("course",course);
+
+            Professor user = (Professor) session.getAttribute("user");
+
+            List<Attendance> attendances = professorService.getAttendanceList(course);
+
+            model.addAttribute("attendances",attendances);
+        }
+        catch (Exception e) {
+            model.addAttribute("message",e.getMessage());
+            model.addAttribute("alertClass","alert-danger");
+            return "professor/main";
+        }
+        return "professor/attendance";
+    }
+    @GetMapping(value = "/professor/{cid}/{aid}/attendanceUpdate")
+    public String attendanceUpdateForm(Model model,HttpSession session, @PathVariable("cid") Integer cid,@PathVariable("aid") Long aid){
+        Course course = null;
+        try {
+            AttendanceForm attendanceForm =new AttendanceForm();
+
+            course = professorService.findCourse(cid);
+
+            model.addAttribute("course", course);
+
+            Professor user = (Professor) session.getAttribute("user");
+
+            List<Attendance> attendances = professorService.getAttendanceList(course);
+
+            model.addAttribute("attendances", attendances);
+
+
+            Attendance attendance = professorService.findAttendance(aid);
+            model.addAttribute("attendance", attendance);
+
+            attendanceForm.setAid(attendance.getAid());
+            attendanceForm.setDate(attendance.getDate());
+            attendanceForm.setAttendanceStatus(attendance.getAttendanceStatus());
+
+            model.addAttribute("attendanceForm",attendanceForm);
+
+
+        }catch (Exception e) {
+            model.addAttribute("message",e.getMessage());
+            model.addAttribute("alertClass","alert-danger");
+            return "professor/attendance";
+        }
+        return "professor/attendanceUpdate";
+    }
+    @GetMapping(value = "/professor/{cid}/qa")
+    public String qaList(Model model,HttpSession session, @PathVariable("cid") Integer cid) {
+        Course course = null;
+
+        try {
+            course =professorService.findCourse(cid);
+
+            model.addAttribute("course",course);
+
+            Professor user = (Professor) session.getAttribute("user");
+
+            List<QA> qas = professorService.getQAList(cid);
+
+            model.addAttribute("qas",qas);
+        }
+        catch (Exception e) {
+            model.addAttribute("message",e.getMessage());
+            model.addAttribute("alertClass","alert-danger");
+        }
+        return "professor/qa";
+    }
+    @GetMapping(value = "/professor/{cid}/{qid}/qaDetail")
+    public String qaDetail(Model model,HttpSession session, @PathVariable("cid") Integer cid, @PathVariable("qid") Long qid) {
+        Course course = null;
+
+        try {
+            course =professorService.findCourse(cid);
+
+            model.addAttribute("course",course);
+
+            Student user = (Student) session.getAttribute("user");
+
+            QA qa = professorService.findQA(qid);
+
+            model.addAttribute("qa",qa);
+        }
+        catch (Exception e) {
+            model.addAttribute("message",e.getMessage());
+            model.addAttribute("alertClass","alert-danger");
+        }
+        return "professor/qaDetail";
+    }
+    @GetMapping(value = "/professor/{cid}/{qid}/qaUpdateForm")
+    public String qaUpdateForm(Model model,HttpSession session, @PathVariable("cid") Integer cid, @PathVariable("qid") Long qid){
+        Course course = null;
+        try {
+
+            course =professorService.findCourse(cid);
+
+            model.addAttribute("course",course);
+
+            Student user = (Student) session.getAttribute("user");
+
+            QA qa = professorService.findQA(qid);
+
+            model.addAttribute("qa",qa);
+
+            QaForm qaForm = new QaForm();
+            qaForm.setQid(qa.getQid());
+            qaForm.setQuestion(qa.getQuestion());
+            qaForm.setAnswer(qa.getAnswer());
+
+            model.addAttribute(qaForm);
+        }
+        catch (Exception e) {
+            model.addAttribute("message",e.getMessage());
+            model.addAttribute("alertClass","alert-danger");
+            return "redirect:/professor/qaDetail";
+        }
+        return "professor/qaForm";
+    }
+    @PostMapping(value = "/professor/{cid}/{qid}/qaUpdate")
+    public String qaUpdate(QaForm qaForm,Model model,HttpSession session, @PathVariable("cid") Integer cid, @PathVariable("qid") Long qid){
+        Course course = null;
+        try {
+
+            model.addAttribute(qaForm);
+
+            course =professorService.findCourse(cid);
+
+            model.addAttribute("course",course);
+
+            Professor user = (Professor) session.getAttribute("user");
+
+            QA qa = professorService.updateQA(qid, qaForm);
+
+            List<QA> qas = professorService.getQAList(cid);
+
+            model.addAttribute("qas",qas);
+
+        }
+        catch (Exception e) {
+            model.addAttribute("message",e.getMessage());
+            model.addAttribute("alertClass","alert-danger");
+            return "redirect:/professor/qaDetail";
+        }
+        return "professor/qa";
     }
 }

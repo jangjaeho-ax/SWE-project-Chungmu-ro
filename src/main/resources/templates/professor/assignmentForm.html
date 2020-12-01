@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments/header :: header">
+    <title>충무로 3번 출구</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+</head>
+<body>
+<div class="container">
+    <div th:replace="fragments/bodyHeader :: bodyHeader" />
+
+    <div class="jumbotron">
+        <h1 th:text = "${course.courseName}+${course.cid}"/>
+        <p class="lead" >과제 정보 수정</p>
+    </div>
+    <h4>제출 정보</h4>
+    <form input th:action ="@{/professor/{cid}/{aid}/assignmentUpdate (cid=${course.cid}, aid=${assignment.aid})}"
+          th:method = "post"  th:object="${assignmentForm}">
+        <label class ="label lable-info">과제 제목</label>
+        <input type="text" th:field = "*{title}"
+               th:value ="*{title}" class ="form-control"></input>
+        <label class ="label lable-info">최대 점수</label>
+        <input type="number" th:field ="*{perfectScore}"
+               th:value ="*{perfectScore}" class="form-control"></input>
+        <label class ="label lable-info">시작 시간</label>
+        <input type="datetime-local" th:field = "*{starDate}"
+               th:value ="*{starDate}" class ="form-control"></input>
+        <label class ="label lable-info">종료 시간</label>
+        <input type="datetime-local" th:field = "*{dueDate}"
+               th:value ="*{dueDate}" class ="form-control"></input>
+        <label class ="label lable-info">과제 설명</label>
+        <input type="text" th:field = "*{description}"
+               th:value ="*{description}" class ="form-control"></input>
+        <input type ="submit">보내기</input>
+    </form>
+    <div th:if="${message}" th:text="${message}" th:class="${'alert ' + alertClass}"/>
+    <div th:replace="fragments/footer :: footer" />
+</div> <!-- /container -->
+</body>
+</html>

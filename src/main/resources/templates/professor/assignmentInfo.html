@@ -48,11 +48,13 @@
         <tbody>
         <tr th:each="handIn : ${handIns}">
             <td th:text="${handInStat.index}"></td>
+            <td th:text="${handIn.score}"></td>
             <td th:text="${handIn.enlist.student.sid}"></td>
-            <td th:unless ="${handIn.fileName == ''}"
-                th:href="@{/professor/fileDown/{hid} (hid =${handIn.hid})}" th:text="${handIn.fileOriginName}"></td>
+            <td> <a th:unless ="${handIn.fileName == ''}"
+                    th:href="@{/professor/fileDown/{hid} (hid =${handIn.hid})}">[[${handIn.fileOriginName}]]</a>
+            </td>
             <td>
-                <a href="#" th:href="@{/professor/{cid}/{aid}/{hid}/handInDetail
+                <a href="#" th:href="@{/professor/{cid}/{aid}/{hid}/updateScore
                 (cid=${course.cid}, aid=${assignment.aid}, hid =${handIn.hid})}"
                    class="btn btn-primary" role="button">성적 수정</a>
             </td>

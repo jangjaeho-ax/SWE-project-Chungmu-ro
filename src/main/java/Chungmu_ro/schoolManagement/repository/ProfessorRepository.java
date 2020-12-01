@@ -14,13 +14,10 @@ import java.util.Optional;
 @Repository
 @RequiredArgsConstructor
 public class ProfessorRepository {
-//    @PersistenceContext
+
     private final EntityManager em;
-    public void init(){
-        em.createQuery("select p from Professor p join fetch p.qaList ");
-        em.createQuery("select p from Professor p join fetch p.courseList ");
-        em.createQuery("select p from Professor p join fetch p.tutoringList ");
-    }
+
+
     public void save(Professor professor){
         if(findByPid(professor.getPid()).isPresent())
             em.merge(professor);
@@ -38,8 +35,9 @@ public class ProfessorRepository {
     }
 
     public Optional<Professor> findByAccountId(String AccountId){
-        return  em.createQuery("select p from Professor p where p.AccountId = :AccountId"
-                ,Professor.class).setParameter("AccountId",AccountId)
+        return  em.createQuery("select p from Professor p join fetch p.courseList " +
+                "where p.AccountId =:AccountId",Professor.class)
+                .setParameter("AccountId",AccountId)
                 .getResultList().stream().findAny();
     }
 

@@ -32,15 +32,6 @@ public class StudentService {
     private final TutoringRepository tutoringRepository;
     private final EnlistRepository enlistRepository;
 
-    public void init(){
-        studentRepository.init();
-        professorRepository.init();
-        assignmentRepository.init();
-        handInRepository.init();
-        qaRepository.init();
-        tutoringRepository.init();
-        enlistRepository.init();
-    }
     public Student studentJoin(Student student){
         studentRepository.save(student);
         return student;
@@ -244,12 +235,12 @@ public class StudentService {
     public QA updateQA(Long qid, QaForm qaForm) throws  Exception{
         QA qa = findQA(qid);
         qa.setQuestion(qaForm.getQuestion());
-        qa.setAnswer(qa.getAnswer());
+        qa.setAnswer(qaForm.getAnswer());
         qa.setDateTime(LocalDateTime.now());
         qaRepository.save(qa);
         return qa;
     }
-    public QA addQA(Course course,Student student)  throws Exception{
+    public QA addQA(Course course,Student student,QaForm qaForm)  throws Exception{
         //QA 수정 등록 함수, course
         QA qa = new QA();
         Professor professor =course.getProfessor();
@@ -260,7 +251,7 @@ public class StudentService {
         qa.setProfessor(professor);
         qa.setDateTime(LocalDateTime.now());
         qa.setAnswer("");
-        qa.setQuestion("");
+        qa.setQuestion(qaForm.getQuestion());
         qaRepository.save(qa);
         return qa;
     }

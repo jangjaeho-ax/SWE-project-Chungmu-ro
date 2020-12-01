@@ -35,10 +35,10 @@
     </div>
     <p>
         <a href="#"  class="btn btn-primary" role="button"
-           th:href="@{/student/{cid}/qa (cid=${course.cid})}">목록</a>
-        <a th:if ="${session.user.sid == qa.student.sid}" href="#"
-           th:href="@{/student/{cid}/{qid}/qaUpdateForm (cid=${course.cid}, qid=${qa.qid})}"
-           class="btn btn-primary" role="button">질문 수정</a>
+           th:href="@{/professor/{cid}/qa (cid=${course.cid})}">목록</a>
+        <a th:if ="${session.user.pid == qa.professor.sid}" href="#"
+           th:href="@{/professor/{cid}/{qid}/qaUpdateForm (cid=${course.cid}, qid=${qa.qid})}"
+           class="btn btn-primary" role="button">답변 수정</a>
     </p>
     <div th:if="${message}" th:text="${message}" th:class="${'alert ' + alertClass}"/>
     <div th:replace="fragments/footer :: footer" />

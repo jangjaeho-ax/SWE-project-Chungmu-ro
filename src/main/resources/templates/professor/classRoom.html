@@ -9,7 +9,7 @@
     <div th:replace="fragments/bodyHeader :: bodyHeader" />
     <div class="jumbotron">
         <h1 th:text = "${course.courseName}+${course.cid}"/>
-        <p class="lead" th:text ="${session.user.sid}"/>
+        <p class="lead" th:text ="${session.user.pid}"/>
         <p>
             <a class="btn btn-lg btn-secondary" href ="#" th:href="@{/professor/{cid}/assignment
                 (cid=${course.cid})}">과제</a>

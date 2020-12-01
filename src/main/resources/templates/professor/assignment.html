@@ -25,11 +25,13 @@
             <td th:text="${assignmentStat.index}"></td>
             <td th:text="${assignment.title}"></td>
             <td>
-                <a href="#" th:href="@{/student/{cid}/{aid}/assignmentDetail (cid=${course.cid}, aid=${assignment.aid})}"
+                <a href="#" th:href="@{/professor/{cid}/{aid}/assignmentDetail (cid=${course.cid}, aid=${assignment.aid})}"
                    class="btn btn-primary" role="button">자세히 보기</a>
             </td>
         </tr>
         </tbody>
+        <a href="#"  class="btn btn-primary" role="button"
+           th:href="@{/student/{cid}/assignmentAddForm (cid=${course.cid})}">추가</a>
 
     </table>
     <div th:if="${message}" th:text="${message}" th:class="${'alert ' + alertClass}"/>

@@ -38,7 +38,7 @@ public class EnlistRepository {
     }
     public List<Enlist> findByCid(Integer cid){
 
-        return em.createQuery("select e from Enlist e join e.course c" +
+        return em.createQuery("select e from Enlist e join e.course c " +
                 "on c.cid = :cid",Enlist.class)
                 .setParameter("cid", cid)
                 .getResultList();

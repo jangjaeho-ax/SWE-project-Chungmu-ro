@@ -1,13 +1,11 @@
 package Chungmu_ro.schoolManagement.controller;
 
 import Chungmu_ro.schoolManagement.domain.*;
-import Chungmu_ro.schoolManagement.form.HandInForm;
 import Chungmu_ro.schoolManagement.form.LoginForm;
 import Chungmu_ro.schoolManagement.form.QaForm;
-import Chungmu_ro.schoolManagement.service.MemberService;
+
 import Chungmu_ro.schoolManagement.service.StudentService;
 import lombok.RequiredArgsConstructor;
-import net.bytebuddy.utility.RandomString;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.StringUtils;
@@ -16,7 +14,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import javax.print.DocFlavor;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -24,7 +21,6 @@ import javax.validation.Valid;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.Random;
 
 @Controller
@@ -49,6 +45,7 @@ public class StudentController {
         try {
             Student student = studentService.studentLogin(id, passWord);
             session.setAttribute("user", student);
+            session.setAttribute("authority", "student");
            // session.setAttribute("sid", student.getSid());
         }
         catch(Exception e){
@@ -133,6 +130,7 @@ public class StudentController {
         catch (Exception e) {
             model.addAttribute("message",e.getMessage());
             model.addAttribute("alertClass","alert-danger");
+            return "redirect:/student/classRoom";
         }
         return "student/assignment";
     }
@@ -157,8 +155,10 @@ public class StudentController {
             model.addAttribute("handIn",handIn);
         }
         catch (Exception e) {
+
             model.addAttribute("message",e.getMessage());
             model.addAttribute("alertClass","alert-danger");
+            return "redirect:/student/assignment";
         }
         return "student/assignmentInfo";
     }
@@ -187,7 +187,7 @@ public class StudentController {
             model.addAttribute("alertClass","alert-danger");
             return "student/assignmentInfo";
         }
-         return "student/assignmentUpdate";
+         return "student/assignmentForm";
     }
     @PostMapping(value = "/student/{cid}/{aid}/fileInsert")
     public String assignmentUpdate(@RequestParam("file") MultipartFile files,Model model, HttpSession session,@PathVariable("cid") Integer cid, @PathVariable("aid") Long aid) {
@@ -209,7 +209,7 @@ public class StudentController {
                 File destinationFile;
                 String destinationFileName;
 
-                String fileUrl = "E:\\testFile";
+                String fileUrl = "E:\\testFile\\";
 
                 do {
                     int leftLimit = 48; // numeral '0'
@@ -225,13 +225,15 @@ public class StudentController {
                     destinationFileName = destinationFileName + "." + fileNameExtension;
                     destinationFile = new File(fileUrl + destinationFileName);
                 } while (destinationFile.exists());
+                destinationFile.getParentFile().mkdir();
+                files.transferTo(destinationFile);
 
                 studentService.updateHandIn(handIn.getHid(),destinationFileName,fileName,fileUrl);
             }
         }catch(Exception e){
             model.addAttribute("message",e.getMessage());
             model.addAttribute("alertClass","alert-danger");
-            return "student/assignmentUpdate";
+            return "student/assignmentForm";
         }
         return "student/assignmentInfo";
 
@@ -243,7 +245,7 @@ public class StudentController {
             HandIn handIn = studentService.findHandIn(hid);
 
             String fileUrl = handIn.getFileURL();
-            fileUrl+="/";
+            fileUrl+="\\";
             String savePath = fileUrl;
             String fileName = handIn.getFileName();
 
@@ -256,8 +258,11 @@ public class StudentController {
 
             try{
                 file =new File(savePath,fileName);
-                in = new FileInputStream((file));
-            }catch(FileNotFoundException e){ skip =true;}
+                in = new FileInputStream(file);
+            }catch(FileNotFoundException e)
+            {
+                skip=true;
+            }
 
             response.reset();
             response.setContentType("application/octet-stream");
@@ -377,7 +382,7 @@ public class StudentController {
             QaForm qaForm = new QaForm();
             qaForm.setQid(qa.getQid());
             qaForm.setQuestion(qa.getQuestion());
-            qaForm.setQuestion(qa.getAnswer());
+            qaForm.setAnswer(qa.getAnswer());
 
             model.addAttribute(qaForm);
         }
@@ -426,8 +431,7 @@ public class StudentController {
 
             Student user = (Student) session.getAttribute("user");
 
-            QA qa = studentService.updateQA(qaForm.getQid(), qaForm);
-
+            QA qa = studentService.addQA(course,user,qaForm);
 
             List<QA> qas = studentService.getQAList(cid);
 
@@ -451,15 +455,12 @@ public class StudentController {
 
             Student user = (Student) session.getAttribute("user");
 
-            QA qa = studentService.addQA(course, user);
+            //QA qa = studentService.addQA(course, user);
 
             QaForm qaForm = new QaForm();
-            qaForm.setQid(qa.getQid());
-            qaForm.setQuestion(qa.getQuestion());
-            qaForm.setAnswer(qa.getAnswer());
+
 
             model.addAttribute(qaForm);
-            model.addAttribute("qa",qa);
         }
         catch (Exception e) {
             model.addAttribute("message",e.getMessage());

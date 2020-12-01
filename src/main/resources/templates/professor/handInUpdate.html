@@ -10,12 +10,14 @@
 
     <div class="jumbotron">
         <h1 th:text = "${course.courseName}+${course.cid}"/>
-        <p class="lead" >제출 파일 수정</p>
+        <p class="lead" >성적 수정</p>
     </div>
     <h4>제출 정보</h4>
-    <form input th:action ="@{/student/{cid}/{aid}/fileInsert (cid=${course.cid}, aid=${assignment.aid})}" th:method = "post" enctype="multipart/form-data">
-        <label class ="label lable-info">제출 파일</label>
-        <input type="file" name = "file"></input>
+    <form input th:action ="@{/professor/{cid}/{aid}/{hid}/updateScore
+    (cid=${course.cid}, aid=${assignment.aid}, hid=${handIn.hid})}" th:method = "post" enctype="multipart/form-data">
+        <label class ="label lable-info">성적 입력</label>
+        <input type="number" th:field ="${handInForm.score}"
+               th:value="${handInForm.score}" min ="0" th:max ="${assignment.perfectScore}" ></input>
         <input type ="submit">보내기</input>
     </form>
     <div th:if="${message}" th:text="${message}" th:class="${'alert ' + alertClass}"/>

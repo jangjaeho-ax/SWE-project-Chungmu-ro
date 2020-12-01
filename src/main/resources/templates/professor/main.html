@@ -25,7 +25,7 @@
             <td th:text="${course.cid}"></td>
             <td th:text="${course.courseName}"></td>
             <td>
-                <a href="#" th:href="@{/student/{id}/room (id=${course.cid})}"
+                <a href="#" th:href="@{/professor/{id}/room (id=${course.cid})}"
                    class="btn btn-primary" role="button">선택</a>
             </td>
         </tr>
