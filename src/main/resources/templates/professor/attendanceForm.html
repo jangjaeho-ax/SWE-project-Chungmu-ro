@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments/header :: header">
+    <title>충무로 3번 출구</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+</head>
+<body>
+<div class="container">
+    <div th:replace="fragments/bodyHeader :: bodyHeader" />
+
+    <div class="jumbotron">
+        <h1 th:text = "${course.courseName}+${course.cid}"/>
+        <p class="lead">출석 페이지</p>
+    </div>
+    <form input th:action ="@{/professor/{cid}/{aid}/attendanceUpdate (cid=${course.cid}, aid=${attendance.aid})}"
+          th:method = "post"  th:object="${attendanceForm}">
+        <div>
+            <input type="radio" th:value ="ATTEND" th:field ="*{attendanceStatus}" id ="option1" >
+            <label class="custom-control-label" for="option1" th:check="*{attendanceStatus} == 'ATTEND'">출석</label>
+        </div>
+        <div>
+            <input type="radio" th:value ="LATE" th:field ="*{attendanceStatus}" id ="option2" >
+            <label class="custom-control-label" for="option2" th:check="*{attendanceStatus} == 'LATE'">지각</label>
+        </div>
+        <div>
+            <input type="radio" th:value ="ABSENT" th:field ="*{attendanceStatus}" id ="option3" >
+            <label class="custom-control-label" for="option3" th:check="*{attendanceStatus} == 'ABSENT'">결석</label>
+        </div>
+        <div>
+            <input type="radio" th:value ="YET" th:field ="*{attendanceStatus}" id ="option4" >
+            <label class="custom-control-label" for="option4" th:check="*{attendanceStatus} == 'YET'" >미처리</label>
+        </div>
+        <input type ="submit"th:value="보내기"></input>
+    </form>>
+    <div th:if="${message}" th:text="${message}" th:class="${'alert ' + alertClass}"/>
+    <div th:replace="fragments/footer :: footer" />
+</div> <!-- /container -->
+</body>
+</html>

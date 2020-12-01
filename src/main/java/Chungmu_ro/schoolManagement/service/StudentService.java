@@ -144,6 +144,7 @@ public class StudentService {
             throw new NoSuchElementException("제출 정보가 없습니다.");//예외 발생
         return handIn.get();
     }
+    @Transactional
     public void updateHandIn(Long hid,String fileName,
                              String fileOriginName, String fileURL) throws Exception{
         Optional<HandIn> handIn = handInRepository.findByHid(hid);
@@ -155,6 +156,7 @@ public class StudentService {
         handIn.get().setFileURL(fileURL);
         handInRepository.save(handIn.get());
     }
+    @Transactional
     public void addHandIn(Course course,Student student,Assignment assignment,HandIn handIn) throws Exception{
         //과제 제출 함수, 과제 엔티티와 제출물 엔티티를 입력으로 받음
         Enlist enlist=null;
@@ -232,6 +234,7 @@ public class StudentService {
             throw new NoSuchElementException("선택한 QA 정보가 없습니다.");
         return qa.get();
     }
+    @Transactional
     public QA updateQA(Long qid, QaForm qaForm) throws  Exception{
         QA qa = findQA(qid);
         qa.setQuestion(qaForm.getQuestion());
@@ -240,6 +243,7 @@ public class StudentService {
         qaRepository.save(qa);
         return qa;
     }
+    @Transactional
     public QA addQA(Course course,Student student,QaForm qaForm)  throws Exception{
         //QA 수정 등록 함수, course
         QA qa = new QA();
@@ -311,6 +315,7 @@ public class StudentService {
             throw new NoSuchElementException("강의를 담당하는 교수님이 없습니다.");
         return professor.getTutoringList();
     }
+    @Transactional
     public Optional<Tutoring> addTutoring(Course course, Tutoring tutoring) throws Exception {
         Student student = tutoring.getStudent();
         Professor professor = course.getProfessor();

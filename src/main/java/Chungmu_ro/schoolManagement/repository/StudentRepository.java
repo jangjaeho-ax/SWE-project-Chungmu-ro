@@ -27,7 +27,7 @@ public class StudentRepository {
             em.merge(student);
         else
             em.persist(student);
-        em.flush();
+
     }
 
     public Optional<Student> findBySid(Integer sid){

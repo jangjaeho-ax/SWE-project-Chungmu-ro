@@ -3,6 +3,7 @@ package Chungmu_ro.schoolManagement.controller;
 import Chungmu_ro.schoolManagement.domain.*;
 import Chungmu_ro.schoolManagement.form.*;
 import Chungmu_ro.schoolManagement.service.ProfessorService;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
@@ -47,8 +48,8 @@ public class ProfessorController {
             session.setAttribute("authority", "professor");
         }catch(Exception e){
             log.error(e.getMessage());
-            model.addAttribute("message",e.getMessage());
-            model.addAttribute("alertClass","alert-danger");
+            redirectAttributes.addFlashAttribute("message", e.getMessage());
+            redirectAttributes.addFlashAttribute("alertClass", "alert-danger");
             return "professor/loginForm";
         }
         redirectAttributes.addFlashAttribute("message","로그인 성공");
@@ -56,7 +57,7 @@ public class ProfessorController {
         return "redirect:/professor/main";
     }
     @GetMapping(value = "/professor/main")
-    public String CourseList(Model model,HttpSession session) {
+    public String CourseList(Model model,HttpSession session,RedirectAttributes redirectAttributes) {
 
         Professor user = (Professor)session.getAttribute("user");
 
@@ -65,27 +66,29 @@ public class ProfessorController {
             model.addAttribute("courses",courses);
         }
         catch(Exception e){
-            model.addAttribute("message",e.getMessage());
-            model.addAttribute("alertClass","alert-danger");
+            redirectAttributes.addFlashAttribute("message", e.getMessage());
+            redirectAttributes.addFlashAttribute("alertClass", "alert-danger");
+            return "redirect:/professor/main";
         }
 
         return "professor/main";
     }
     @GetMapping(value = "/professor/{cid}/room")
-    public String classRoomDetail(Model model,HttpSession session,@PathVariable("cid") Integer cid) {
+    public String classRoomDetail(Model model,HttpSession session,@PathVariable("cid") Integer cid,RedirectAttributes redirectAttributes) {
         Course course = null;
         try {
             course = professorService.findCourse(cid);
         } catch (Exception e) {
-            model.addAttribute("message",e.getMessage());
-            model.addAttribute("alertClass","alert-danger");
+            redirectAttributes.addFlashAttribute("message", e.getMessage());
+            redirectAttributes.addFlashAttribute("alertClass", "alert-danger");
+            return "redirect:/professor/main";
         }
         session.setAttribute("course",course);
         model.addAttribute("course",course);
         return "professor/classRoom";
     }
     @GetMapping(value = "/professor/{cid}/assignment")
-    public String assignmentList(Model model,HttpSession session, @PathVariable("cid") Integer cid) {
+    public String assignmentList(Model model,HttpSession session, @PathVariable("cid") Integer cid,RedirectAttributes redirectAttributes) {
         Course course = null;
         List<Assignment> assignments= new ArrayList<>();
         try {
@@ -98,14 +101,14 @@ public class ProfessorController {
             model.addAttribute("assignments",assignments);
         }
         catch (Exception e) {
-            model.addAttribute("message",e.getMessage());
-            model.addAttribute("alertClass","alert-danger");
-            return "professor/classRoom";
+            redirectAttributes.addFlashAttribute("message", e.getMessage());
+            redirectAttributes.addFlashAttribute("alertClass", "alert-danger");
+            return "redirect:/professor/main";
         }
         return "professor/assignment";
     }
     @GetMapping(value = "/professor/{cid}/{aid}/assignmentDetail")
-    public String assignmentDetail(Model model,HttpSession session,@PathVariable("cid") Integer cid, @PathVariable("aid") Long aid) {
+    public String assignmentDetail(Model model,HttpSession session,@PathVariable("cid") Integer cid, @PathVariable("aid") Long aid,RedirectAttributes redirectAttributes) {
         Course course = null;
         try {
 
@@ -124,14 +127,14 @@ public class ProfessorController {
             model.addAttribute("handIns",handIns);
         }
         catch (Exception e) {
-            model.addAttribute("message",e.getMessage());
-            model.addAttribute("alertClass","alert-danger");
-            return "professor/assignment";
+            redirectAttributes.addFlashAttribute("message", e.getMessage());
+            redirectAttributes.addFlashAttribute("alertClass", "alert-danger");
+            return "redirect:/professor/main";
         }
         return "professor/assignmentInfo";
     }
     @GetMapping(value = "/professor/{cid}/{aid}/assignmentUpdate")
-    public String assignmentUpdateForm(Model model, HttpSession session,@PathVariable("cid") Integer cid, @PathVariable("aid") Long aid) {
+    public String assignmentUpdateForm(Model model, HttpSession session,@PathVariable("cid") Integer cid, @PathVariable("aid") Long aid,RedirectAttributes redirectAttributes) {
         Course course = null;
         try {
 
@@ -159,16 +162,15 @@ public class ProfessorController {
 
         }
         catch (Exception e) {
-            List<HandIn> handIns= professorService.findHandInList(aid);
-            model.addAttribute("handIns",handIns);
-            model.addAttribute("message",e.getMessage());
-            model.addAttribute("alertClass","alert-danger");
-            return "professor/assignmentDetail";
+            redirectAttributes.addFlashAttribute("message", e.getMessage());
+            redirectAttributes.addFlashAttribute("alertClass", "alert-danger");
+            return "redirect:/professor/main";
         }
         return "professor/assignmentForm";
     }
     @PostMapping(value = "/professor/{cid}/{aid}/assignmentUpdate")
-    public String assignmentUpdate(Model model,AssignmentForm assignmentForm, HttpSession session,@PathVariable("cid") Integer cid, @PathVariable("aid") Long aid) {
+    public String assignmentUpdate(Model model,AssignmentForm assignmentForm, HttpSession session,
+                                   @PathVariable("cid") Integer cid, @PathVariable("aid") Long aid,RedirectAttributes redirectAttributes) {
         Course course = null;
         try {
 
@@ -180,13 +182,7 @@ public class ProfessorController {
 
             Assignment assignment = professorService.findAssignment(aid);
 
-            assignment.setTitle(assignmentForm.getTitle());
-            assignment.setPerfectScore(assignmentForm.getPerfectScore());
-            assignment.setStarDate(assignmentForm.getStarDate());
-            assignment.setDueDate(assignmentForm.getDueDate());
-            assignment.setDescription(assignmentForm.getDescription());
-
-            professorService.setAssignment(course,assignment);
+            assignment = professorService.setAssignment(course,assignment,assignmentForm);
 
             model.addAttribute("assignment",assignment);
 
@@ -194,16 +190,40 @@ public class ProfessorController {
             model.addAttribute("handIns",handIns);
         }
         catch (Exception e) {
-            List<HandIn> handIns= professorService.findHandInList(aid);
-            model.addAttribute("handIns",handIns);
-            model.addAttribute("message",e.getMessage());
-            model.addAttribute("alertClass","alert-danger");
-            return "professor/assignmentDetail";
+            redirectAttributes.addFlashAttribute("message", e.getMessage());
+            redirectAttributes.addFlashAttribute("alertClass", "alert-danger");
+            return "redirect:/professor/main";
         }
-        return "professor/assignmentDetail";
+        return "professor/assignmentInfo";
+    }
+    @PostMapping(value = "/professor/{cid}//assignmentUpdate")
+    public String assignmentUpdate(Model model,AssignmentForm assignmentForm, HttpSession session,
+                                   @PathVariable("cid") Integer cid,RedirectAttributes redirectAttributes) {
+        Course course = null;
+        try {
+
+            course =professorService.findCourse(cid);
+
+            Professor user = (Professor) session.getAttribute("user");
+
+            model.addAttribute("course",course);
+
+            Assignment assignment = professorService.addAssignment(course,assignmentForm);
+
+            model.addAttribute("assignment",assignment);
+
+            List<HandIn> handIns= professorService.findHandInList(assignment.getAid());
+            model.addAttribute("handIns",handIns);
+        }
+        catch (Exception e) {
+            redirectAttributes.addFlashAttribute("message", e.getMessage());
+            redirectAttributes.addFlashAttribute("alertClass", "alert-danger");
+            return "redirect:/professor/main";
+        }
+        return "professor/assignmentInfo";
     }
     @GetMapping(value = "/student/{cid}/assignmentAddForm")
-    public String assignmentAddForm(Model model, HttpSession session,@PathVariable("cid") Integer cid) {
+    public String assignmentAddForm(Model model, HttpSession session,@PathVariable("cid") Integer cid,RedirectAttributes redirectAttributes) {
         Course course = null;
         try {
 
@@ -215,30 +235,29 @@ public class ProfessorController {
 
             model.addAttribute("course", course);
 
-            Assignment assignment = new Assignment(course, "", LocalDateTime.now(),
-                    LocalDateTime.now(), 0, "");
+            Assignment assignment = new Assignment();
 
             model.addAttribute("assignment", assignment);
 
-            assignmentForm.setAid(assignment.getAid());
-            assignmentForm.setStarDate(assignment.getStarDate());
-            assignmentForm.setDueDate(assignment.getDueDate());
-            assignmentForm.setTitle(assignment.getTitle());
-            assignmentForm.setPerfectScore(assignment.getPerfectScore());
-            assignmentForm.setDescription(assignment.getDescription());
+            assignmentForm.setStarDate(LocalDateTime.now());
+            assignmentForm.setDueDate(LocalDateTime.now());
+            assignmentForm.setTitle("");
+            assignmentForm.setPerfectScore(0);
+            assignmentForm.setDescription("");
 
             model.addAttribute("assignmentForm", assignmentForm);
 
 
         } catch (Exception e) {
-            model.addAttribute("message", e.getMessage());
-            model.addAttribute("alertClass", "alert-danger");
-            return "recirect:/professor/assignment";
+            redirectAttributes.addFlashAttribute("message", e.getMessage());
+            redirectAttributes.addFlashAttribute("alertClass", "alert-danger");
+            return "redirect:/professor/main";
         }
         return "professor/assignmentForm";
     }
     @GetMapping(value = "/professor/{cid}/{aid}/{hid}/updateScore")
-    public String scoreUpdateForm(Model model, HttpSession session,@PathVariable("cid") Integer cid, @PathVariable("aid") Long aid, @PathVariable("hid") Long hid) {
+    public String scoreUpdateForm(Model model, HttpSession session,
+                                  @PathVariable("cid") Integer cid, @PathVariable("aid") Long aid, @PathVariable("hid") Long hid,RedirectAttributes redirectAttributes) {
         Course course = null;
         HandIn handIn =null;
         try {
@@ -266,17 +285,15 @@ public class ProfessorController {
             model.addAttribute("handInForm",handInForm);
         }
         catch (Exception e) {
-            List<HandIn> handIns= professorService.findHandInList(aid);
-            model.addAttribute("handIns",handIns);
-            model.addAttribute("message",e.getMessage());
-            model.addAttribute("alertClass","alert-danger");
-            return "professor/assignmentInfo";
+            redirectAttributes.addFlashAttribute("message", e.getMessage());
+            redirectAttributes.addFlashAttribute("alertClass", "alert-danger");
+            return "redirect:/professor/main";
         }
         return "professor/handInUpdate";
     }
     @PostMapping(value = "/professor/{cid}/{aid}/{hid}/updateScore")
     public String scoreUpdate(Model model, HttpSession session, HandInForm handInForm,
-                              @PathVariable("cid") Integer cid, @PathVariable("aid") Long aid, @PathVariable("hid") Long hid) {
+                              @PathVariable("cid") Integer cid, @PathVariable("aid") Long aid, @PathVariable("hid") Long hid,RedirectAttributes redirectAttributes) {
         Course course = null;
         HandIn handIn =null;
         try {
@@ -304,11 +321,9 @@ public class ProfessorController {
 
         }
         catch (Exception e) {
-            List<HandIn> handIns= professorService.findHandInList(aid);
-            model.addAttribute("handIns",handIns);
-            model.addAttribute("message",e.getMessage());
-            model.addAttribute("alertClass","alert-danger");
-            return "professor/assignmentInfo";
+            redirectAttributes.addFlashAttribute("message", e.getMessage());
+            redirectAttributes.addFlashAttribute("alertClass", "alert-danger");
+            return "redirect:/professor/main";
         }
         return "professor/assignmentInfo";
     }
@@ -374,7 +389,7 @@ public class ProfessorController {
         }
     }
     @GetMapping(value = "/professor/{cid}/attendance")
-    public String attendanceList(Model model,HttpSession session, @PathVariable("cid") Integer cid) {
+    public String attendanceList(Model model,HttpSession session, @PathVariable("cid") Integer cid,RedirectAttributes redirectAttributes) {
         Course course = null;
         try {
             course =professorService.findCourse(cid);
@@ -388,14 +403,14 @@ public class ProfessorController {
             model.addAttribute("attendances",attendances);
         }
         catch (Exception e) {
-            model.addAttribute("message",e.getMessage());
-            model.addAttribute("alertClass","alert-danger");
-            return "professor/main";
+            redirectAttributes.addFlashAttribute("message", e.getMessage());
+            redirectAttributes.addFlashAttribute("alertClass", "alert-danger");
+            return "redirect:/professor/main";
         }
         return "professor/attendance";
     }
     @GetMapping(value = "/professor/{cid}/{aid}/attendanceUpdate")
-    public String attendanceUpdateForm(Model model,HttpSession session, @PathVariable("cid") Integer cid,@PathVariable("aid") Long aid){
+    public String attendanceUpdateForm(Model model,HttpSession session, @PathVariable("cid") Integer cid,@PathVariable("aid") Long aid,RedirectAttributes redirectAttributes){
         Course course = null;
         try {
             AttendanceForm attendanceForm =new AttendanceForm();
@@ -422,14 +437,41 @@ public class ProfessorController {
 
 
         }catch (Exception e) {
-            model.addAttribute("message",e.getMessage());
-            model.addAttribute("alertClass","alert-danger");
-            return "professor/attendance";
+            redirectAttributes.addFlashAttribute("message", e.getMessage());
+            redirectAttributes.addFlashAttribute("alertClass", "alert-danger");
+            return "redirect:/professor/main";
         }
-        return "professor/attendanceUpdate";
+        return "professor/attendanceForm";
+    }
+    @PostMapping(value = "/professor/{cid}/{aid}/attendanceUpdate")
+    public String attendanceUpdate(Model model,HttpSession session,AttendanceForm attendanceForm,
+                                   @PathVariable("cid") Integer cid,@PathVariable("aid") Long aid,RedirectAttributes redirectAttributes){
+        Course course = null;
+        try {
+
+            course = professorService.findCourse(cid);
+
+            model.addAttribute("course", course);
+
+            Professor user = (Professor) session.getAttribute("user");
+
+            Attendance attendance = professorService.updateAttendance(aid,attendanceForm);
+
+            model.addAttribute("attendance", attendance);
+
+            List<Attendance> attendances = professorService.getAttendanceList(course);
+
+            model.addAttribute("attendances", attendances);
+
+        }catch (Exception e) {
+            redirectAttributes.addFlashAttribute("message", e.getMessage());
+            redirectAttributes.addFlashAttribute("alertClass", "alert-danger");
+            return "redirect:/professor/main";
+        }
+        return "professor/attendance";
     }
     @GetMapping(value = "/professor/{cid}/qa")
-    public String qaList(Model model,HttpSession session, @PathVariable("cid") Integer cid) {
+    public String qaList(Model model,HttpSession session, @PathVariable("cid") Integer cid,RedirectAttributes redirectAttributes) {
         Course course = null;
 
         try {
@@ -444,13 +486,14 @@ public class ProfessorController {
             model.addAttribute("qas",qas);
         }
         catch (Exception e) {
-            model.addAttribute("message",e.getMessage());
-            model.addAttribute("alertClass","alert-danger");
+            redirectAttributes.addFlashAttribute("message", e.getMessage());
+            redirectAttributes.addFlashAttribute("alertClass", "alert-danger");
+            return "redirect:/professor/main";
         }
         return "professor/qa";
     }
     @GetMapping(value = "/professor/{cid}/{qid}/qaDetail")
-    public String qaDetail(Model model,HttpSession session, @PathVariable("cid") Integer cid, @PathVariable("qid") Long qid) {
+    public String qaDetail(Model model,HttpSession session, @PathVariable("cid") Integer cid, @PathVariable("qid") Long qid,RedirectAttributes redirectAttributes) {
         Course course = null;
 
         try {
@@ -458,20 +501,21 @@ public class ProfessorController {
 
             model.addAttribute("course",course);
 
-            Student user = (Student) session.getAttribute("user");
+            Professor user = (Professor) session.getAttribute("user");
 
             QA qa = professorService.findQA(qid);
 
             model.addAttribute("qa",qa);
         }
         catch (Exception e) {
-            model.addAttribute("message",e.getMessage());
-            model.addAttribute("alertClass","alert-danger");
+            redirectAttributes.addFlashAttribute("message", e.getMessage());
+            redirectAttributes.addFlashAttribute("alertClass", "alert-danger");
+            return "redirect:/professor/main";
         }
         return "professor/qaDetail";
     }
     @GetMapping(value = "/professor/{cid}/{qid}/qaUpdateForm")
-    public String qaUpdateForm(Model model,HttpSession session, @PathVariable("cid") Integer cid, @PathVariable("qid") Long qid){
+    public String qaUpdateForm(Model model,HttpSession session, @PathVariable("cid") Integer cid, @PathVariable("qid") Long qid,RedirectAttributes redirectAttributes){
         Course course = null;
         try {
 
@@ -479,7 +523,7 @@ public class ProfessorController {
 
             model.addAttribute("course",course);
 
-            Student user = (Student) session.getAttribute("user");
+            Professor user = (Professor) session.getAttribute("user");
 
             QA qa = professorService.findQA(qid);
 
@@ -493,14 +537,14 @@ public class ProfessorController {
             model.addAttribute(qaForm);
         }
         catch (Exception e) {
-            model.addAttribute("message",e.getMessage());
-            model.addAttribute("alertClass","alert-danger");
-            return "redirect:/professor/qaDetail";
+            redirectAttributes.addFlashAttribute("message", e.getMessage());
+            redirectAttributes.addFlashAttribute("alertClass", "alert-danger");
+            return "redirect:/professor/main";
         }
         return "professor/qaForm";
     }
     @PostMapping(value = "/professor/{cid}/{qid}/qaUpdate")
-    public String qaUpdate(QaForm qaForm,Model model,HttpSession session, @PathVariable("cid") Integer cid, @PathVariable("qid") Long qid){
+    public String qaUpdate(QaForm qaForm,Model model,HttpSession session, @PathVariable("cid") Integer cid, @PathVariable("qid") Long qid,RedirectAttributes redirectAttributes){
         Course course = null;
         try {
 
@@ -520,9 +564,9 @@ public class ProfessorController {
 
         }
         catch (Exception e) {
-            model.addAttribute("message",e.getMessage());
-            model.addAttribute("alertClass","alert-danger");
-            return "redirect:/professor/qaDetail";
+            redirectAttributes.addFlashAttribute("message", e.getMessage());
+            redirectAttributes.addFlashAttribute("alertClass", "alert-danger");
+            return "redirect:/professor/main";
         }
         return "professor/qa";
     }

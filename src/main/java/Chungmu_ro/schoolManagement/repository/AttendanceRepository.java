@@ -22,11 +22,11 @@ public class AttendanceRepository {
         em.createQuery("select a from Attendance a join fetch  a.enlist ");
     }
     public void save(Attendance attendance){
-        if(attendance.getAid() ==null)
+        if(attendance.getAid() == null)
             em.persist(attendance);
         else
             em.merge(attendance);
-        em.flush();
+
     }
 
     public Optional<Attendance> findByAid(Long aid){

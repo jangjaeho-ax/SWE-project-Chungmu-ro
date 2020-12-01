@@ -30,7 +30,7 @@
         <label class ="label lable-info">과제 설명</label>
         <input type="text" th:field = "*{description}"
                th:value ="*{description}" class ="form-control"></input>
-        <input type ="submit">보내기</input>
+        <input type ="submit"th:value="보내기"></input>
     </form>
     <div th:if="${message}" th:text="${message}" th:class="${'alert ' + alertClass}"/>
     <div th:replace="fragments/footer :: footer" />

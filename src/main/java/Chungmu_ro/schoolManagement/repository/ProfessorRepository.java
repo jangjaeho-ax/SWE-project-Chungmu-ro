@@ -23,7 +23,7 @@ public class ProfessorRepository {
             em.merge(professor);
         else
             em.persist(professor);
-        em.flush();
+
     }
 
     public Optional<Professor> findByPid(Integer pid){

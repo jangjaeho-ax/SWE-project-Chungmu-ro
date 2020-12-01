@@ -19,6 +19,10 @@
         <p th:text ="${assignment.title}"/>
     </div>
     <div>
+        <label class ="label lable-info">최대 점수</label>
+        <p th:text ="${assignment.perfectScore}"/>
+    </div>
+    <div>
         <label class ="label lable-info">시작 기한</label>
         <p th:text ="${assignment.starDate}"/>
     </div>
@@ -48,8 +52,8 @@
         <tbody>
         <tr th:each="handIn : ${handIns}">
             <td th:text="${handInStat.index}"></td>
-            <td th:text="${handIn.score}"></td>
             <td th:text="${handIn.enlist.student.sid}"></td>
+            <td th:text="${handIn.score}"></td>
             <td> <a th:unless ="${handIn.fileName == ''}"
                     th:href="@{/professor/fileDown/{hid} (hid =${handIn.hid})}">[[${handIn.fileOriginName}]]</a>
             </td>

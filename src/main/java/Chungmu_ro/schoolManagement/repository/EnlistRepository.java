@@ -21,11 +21,11 @@ public class EnlistRepository {
         em.createQuery("select e from Enlist e join fetch e.student");
     }
     public void save(Enlist enlist){
-        if(enlist.getEid() ==null)
+        if(!findByEid(enlist.getEid()).isPresent())
             em.persist(enlist);
         else
             em.merge(enlist);
-        em.flush();
+
     }
 
     public List<Enlist> findBySid(Integer sid){

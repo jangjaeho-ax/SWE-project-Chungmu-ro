@@ -34,7 +34,8 @@ public class StudentController {
         return "student/loginForm";
     }
     @PostMapping(value = "/student/login")
-    public String login(@Valid LoginForm loginForm, BindingResult result,HttpSession session,Model model,RedirectAttributes redirectAttributes) {
+    public String login(@Valid LoginForm loginForm, BindingResult result,
+                        HttpSession session,Model model,RedirectAttributes redirectAttributes) {
 
         if(result.hasErrors()){
             return "redirect:/student/loginForm";
@@ -62,7 +63,7 @@ public class StudentController {
     }
 
     @GetMapping(value = "/student/main")
-    public String CourseList(Model model,HttpSession session) {
+    public String CourseList(Model model,HttpSession session,RedirectAttributes redirectAttributes) {
 
         Student user = (Student)session.getAttribute("user");
 
@@ -71,21 +72,23 @@ public class StudentController {
             model.addAttribute("courses",courses);
         }
         catch(Exception e){
-            model.addAttribute("message",e.getMessage());
-            model.addAttribute("alertClass","alert-danger");
+            redirectAttributes.addFlashAttribute("message", e.getMessage());
+            redirectAttributes.addFlashAttribute("alertClass", "alert-danger");
+            return "redirect:/student/main";
         }
 
         return "student/main";
     }
 
     @GetMapping(value = "/student/{cid}/room")
-    public String classRoomDetail(Model model,HttpSession session,@PathVariable("cid") Integer cid) {
+    public String classRoomDetail(Model model,HttpSession session,@PathVariable("cid") Integer cid,RedirectAttributes redirectAttributes) {
         Course course = null;
         try {
            course = studentService.findCourse(cid);
         } catch (Exception e) {
-            model.addAttribute("message",e.getMessage());
-            model.addAttribute("alertClass","alert-danger");
+            redirectAttributes.addFlashAttribute("message", e.getMessage());
+            redirectAttributes.addFlashAttribute("alertClass", "alert-danger");
+            return "redirect:/student/main";
         }
         session.setAttribute("course",course);
         model.addAttribute("course",course);
@@ -115,7 +118,7 @@ public class StudentController {
 
      */
     @GetMapping(value = "/student/{cid}/assignment")
-    public String assignmentList(Model model,HttpSession session, @PathVariable("cid") Integer cid) {
+    public String assignmentList(Model model,HttpSession session, @PathVariable("cid") Integer cid,RedirectAttributes redirectAttributes) {
         Course course = null;
         List<Assignment> assignments= new ArrayList<>();
         try {
@@ -128,15 +131,16 @@ public class StudentController {
             model.addAttribute("assignments",assignments);
         }
         catch (Exception e) {
-            model.addAttribute("message",e.getMessage());
-            model.addAttribute("alertClass","alert-danger");
-            return "redirect:/student/classRoom";
+            redirectAttributes.addFlashAttribute("message", e.getMessage());
+            redirectAttributes.addFlashAttribute("alertClass", "alert-danger");
+            return "redirect:/student/main";
         }
         return "student/assignment";
     }
 
     @GetMapping(value = "/student/{cid}/{aid}/assignmentDetail")
-    public String assignmentDetail(Model model,HttpSession session,@PathVariable("cid") Integer cid, @PathVariable("aid") Long aid) {
+    public String assignmentDetail(Model model,HttpSession session,
+                                   @PathVariable("cid") Integer cid, @PathVariable("aid") Long aid,RedirectAttributes redirectAttributes) {
         Course course = null;
         try {
 
@@ -155,15 +159,15 @@ public class StudentController {
             model.addAttribute("handIn",handIn);
         }
         catch (Exception e) {
-
-            model.addAttribute("message",e.getMessage());
-            model.addAttribute("alertClass","alert-danger");
-            return "redirect:/student/assignment";
+            redirectAttributes.addFlashAttribute("message", e.getMessage());
+            redirectAttributes.addFlashAttribute("alertClass", "alert-danger");
+            return "redirect:/student/main";
         }
         return "student/assignmentInfo";
     }
     @GetMapping(value = "/student/{cid}/{aid}/assignmentUpdate")
-    public String assignmentUpdateForm(Model model, HttpSession session,@PathVariable("cid") Integer cid, @PathVariable("aid") Long aid) {
+    public String assignmentUpdateForm(Model model, HttpSession session,
+                                       @PathVariable("cid") Integer cid, @PathVariable("aid") Long aid,RedirectAttributes redirectAttributes) {
         Course course = null;
         HandIn handIn =null;
         try {
@@ -183,14 +187,15 @@ public class StudentController {
             model.addAttribute("handIn",handIn);
         }
         catch (Exception e) {
-            model.addAttribute("message",e.getMessage());
-            model.addAttribute("alertClass","alert-danger");
-            return "student/assignmentInfo";
+            redirectAttributes.addFlashAttribute("message", e.getMessage());
+            redirectAttributes.addFlashAttribute("alertClass", "alert-danger");
+            return "redirect:/student/main";
         }
          return "student/assignmentForm";
     }
     @PostMapping(value = "/student/{cid}/{aid}/fileInsert")
-    public String assignmentUpdate(@RequestParam("file") MultipartFile files,Model model, HttpSession session,@PathVariable("cid") Integer cid, @PathVariable("aid") Long aid) {
+    public String assignmentUpdate(@RequestParam("file") MultipartFile files,Model model, HttpSession session,
+                                   @PathVariable("cid") Integer cid, @PathVariable("aid") Long aid,RedirectAttributes redirectAttributes) {
         try {
             Course course =studentService.findCourse(cid);
             model.addAttribute("course",course);
@@ -231,9 +236,9 @@ public class StudentController {
                 studentService.updateHandIn(handIn.getHid(),destinationFileName,fileName,fileUrl);
             }
         }catch(Exception e){
-            model.addAttribute("message",e.getMessage());
-            model.addAttribute("alertClass","alert-danger");
-            return "student/assignmentForm";
+            redirectAttributes.addFlashAttribute("message", e.getMessage());
+            redirectAttributes.addFlashAttribute("alertClass", "alert-danger");
+            return "redirect:/student/main";
         }
         return "student/assignmentInfo";
 
@@ -303,7 +308,7 @@ public class StudentController {
         }
     }
     @GetMapping(value = "/student/{cid}/attendance")
-    public String attendanceList(Model model,HttpSession session, @PathVariable("cid") Integer cid) {
+    public String attendanceList(Model model,HttpSession session, @PathVariable("cid") Integer cid,RedirectAttributes redirectAttributes) {
         Course course = null;
         try {
             course =studentService.findCourse(cid);
@@ -317,13 +322,14 @@ public class StudentController {
             model.addAttribute("attendances",attendances);
         }
         catch (Exception e) {
-            model.addAttribute("message",e.getMessage());
-            model.addAttribute("alertClass","alert-danger");
+            redirectAttributes.addFlashAttribute("message", e.getMessage());
+            redirectAttributes.addFlashAttribute("alertClass", "alert-danger");
+            return "redirect:/student/main";
         }
         return "student/attendance";
     }
     @GetMapping(value = "/student/{cid}/qa")
-    public String qaList(Model model,HttpSession session, @PathVariable("cid") Integer cid) {
+    public String qaList(Model model,HttpSession session, @PathVariable("cid") Integer cid,RedirectAttributes redirectAttributes) {
         Course course = null;
 
         try {
@@ -338,13 +344,15 @@ public class StudentController {
             model.addAttribute("qas",qas);
         }
         catch (Exception e) {
-            model.addAttribute("message",e.getMessage());
-            model.addAttribute("alertClass","alert-danger");
+            redirectAttributes.addFlashAttribute("message", e.getMessage());
+            redirectAttributes.addFlashAttribute("alertClass", "alert-danger");
+            return "redirect:/student/main";
         }
         return "student/qa";
     }
     @GetMapping(value = "/student/{cid}/{qid}/qaDetail")
-    public String qaDetail(Model model,HttpSession session, @PathVariable("cid") Integer cid, @PathVariable("qid") Long qid) {
+    public String qaDetail(Model model,HttpSession session,
+                           @PathVariable("cid") Integer cid, @PathVariable("qid") Long qid,RedirectAttributes redirectAttributes) {
         Course course = null;
 
         try {
@@ -359,13 +367,15 @@ public class StudentController {
             model.addAttribute("qa",qa);
         }
         catch (Exception e) {
-            model.addAttribute("message",e.getMessage());
-            model.addAttribute("alertClass","alert-danger");
+            redirectAttributes.addFlashAttribute("message", e.getMessage());
+            redirectAttributes.addFlashAttribute("alertClass", "alert-danger");
+            return "redirect:/student/main";
         }
         return "student/qaDetail";
     }
     @GetMapping(value = "/student/{cid}/{qid}/qaUpdateForm")
-    public String qaUpdateForm(Model model,HttpSession session, @PathVariable("cid") Integer cid, @PathVariable("qid") Long qid){
+    public String qaUpdateForm(Model model,HttpSession session,
+                               @PathVariable("cid") Integer cid, @PathVariable("qid") Long qid,RedirectAttributes redirectAttributes){
         Course course = null;
         try {
 
@@ -387,13 +397,15 @@ public class StudentController {
             model.addAttribute(qaForm);
         }
         catch (Exception e) {
-            model.addAttribute("message",e.getMessage());
-            model.addAttribute("alertClass","alert-danger");
+            redirectAttributes.addFlashAttribute("message", e.getMessage());
+            redirectAttributes.addFlashAttribute("alertClass", "alert-danger");
+            return "redirect:/student/main";
         }
         return "student/qaForm";
     }
     @PostMapping(value = "/student/{cid}/{qid}/qaUpdate")
-    public String qaUpdate(QaForm qaForm,Model model,HttpSession session, @PathVariable("cid") Integer cid, @PathVariable("qid") Long qid){
+    public String qaUpdate(QaForm qaForm,Model model,HttpSession session,
+                           @PathVariable("cid") Integer cid, @PathVariable("qid") Long qid,RedirectAttributes redirectAttributes){
         Course course = null;
         try {
 
@@ -413,13 +425,15 @@ public class StudentController {
 
         }
         catch (Exception e) {
-            model.addAttribute("message",e.getMessage());
-            model.addAttribute("alertClass","alert-danger");
+            redirectAttributes.addFlashAttribute("message", e.getMessage());
+            redirectAttributes.addFlashAttribute("alertClass", "alert-danger");
+            return "redirect:/student/main";
         }
         return "student/qa";
     }
     @PostMapping(value = "/student/{cid}/qaUpdate")
-    public String qaUpdate(QaForm qaForm,Model model,HttpSession session, @PathVariable("cid") Integer cid){
+    public String qaUpdate(QaForm qaForm,Model model,HttpSession session,
+                           @PathVariable("cid") Integer cid,RedirectAttributes redirectAttributes){
         Course course = null;
         try {
 
@@ -439,13 +453,14 @@ public class StudentController {
 
         }
         catch (Exception e) {
-            model.addAttribute("message",e.getMessage());
-            model.addAttribute("alertClass","alert-danger");
+            redirectAttributes.addFlashAttribute("message", e.getMessage());
+            redirectAttributes.addFlashAttribute("alertClass", "alert-danger");
+            return "redirect:/student/main";
         }
         return "student/qa";
     }
     @GetMapping(value = "/student/{cid}/qaAddForm")
-    public String qaAddForm(Model model,HttpSession session, @PathVariable("cid") Integer cid){
+    public String qaAddForm(Model model,HttpSession session, @PathVariable("cid") Integer cid,RedirectAttributes redirectAttributes){
         Course course = null;
         try {
 
@@ -463,8 +478,9 @@ public class StudentController {
             model.addAttribute(qaForm);
         }
         catch (Exception e) {
-            model.addAttribute("message",e.getMessage());
-            model.addAttribute("alertClass","alert-danger");
+            redirectAttributes.addFlashAttribute("message", e.getMessage());
+            redirectAttributes.addFlashAttribute("alertClass", "alert-danger");
+            return "redirect:/student/main";
         }
         return "student/qaAddForm";
     }

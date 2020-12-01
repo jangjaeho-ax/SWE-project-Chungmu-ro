@@ -1,6 +1,8 @@
 package Chungmu_ro.schoolManagement.service;
 
 import Chungmu_ro.schoolManagement.domain.*;
+import Chungmu_ro.schoolManagement.form.AssignmentForm;
+import Chungmu_ro.schoolManagement.form.AttendanceForm;
 import Chungmu_ro.schoolManagement.form.QaForm;
 import Chungmu_ro.schoolManagement.repository.*;
 import lombok.RequiredArgsConstructor;
@@ -84,7 +86,8 @@ public class ProfessorService {
             throw new NoSuchElementException("선택한 과제가 없습니다.");//예외 발생
         return assignment.get();
     }
-    public void setAssignment(Course course,Assignment assignment){
+    @Transactional
+    public Assignment setAssignment(Course course, Assignment assignment, AssignmentForm assignmentForm){
         //과제 추가 수정 함수
 
         List<Enlist> enlists = enlistRepository.findByCid(course.getCid());
@@ -101,9 +104,35 @@ public class ProfessorService {
         }
         if(assignment == null)
             throw new NoSuchElementException("추가하고자 하는 과제가 없습니다.");
+        assignment.setTitle(assignmentForm.getTitle());
+        assignment.setPerfectScore(assignmentForm.getPerfectScore());
+        assignment.setStarDate(assignmentForm.getStarDate());
+        assignment.setDueDate(assignmentForm.getDueDate());
+        assignment.setDescription(assignmentForm.getDescription());
         assignmentRepository.save(assignment);
+        return assignment;
     }
+    @Transactional
+    public Assignment addAssignment(Course course, AssignmentForm assignmentForm){
+        //과제 추가 수정 함수
 
+        Assignment assignment = new Assignment(course,assignmentForm.getTitle(), assignmentForm.getStarDate(),
+                assignmentForm.getDueDate(),assignmentForm.getPerfectScore(),assignmentForm.getDescription());
+        List<Enlist> enlists = enlistRepository.findByCid(course.getCid());
+        List<HandIn> handIns = new ArrayList<>();
+        if(enlists.isEmpty()){
+            throw new NoSuchElementException("등록된 수강생이 없습니다.");
+        }
+
+        for(Enlist e :enlists){
+                HandIn newHandIn =new HandIn(assignment,e,0,"","","");
+                handInRepository.save(newHandIn);
+                handIns.add(newHandIn);
+        }
+        assignment.setHandInList(handIns);
+        assignmentRepository.save(assignment);
+        return assignment;
+    }
     public void subAssignment(Assignment assignment){
         assignmentRepository.delete(assignment);
     }
@@ -116,6 +145,7 @@ public class ProfessorService {
         assignment.getHandInList();
         return result;
     }
+    @Transactional
     public void addHandInList(HandIn handIn){
         if(handIn == null)
             throw new NoSuchElementException("해당 과제가 없습니다.");
@@ -135,6 +165,7 @@ public class ProfessorService {
             throw new NoSuchElementException("제출 정보가 없습니다.");//예외 발생
         return handIn.get();
     }
+    @Transactional
     public HandIn setHandIn(HandIn handIn) throws Exception{
         if(! handInRepository.findByHid(handIn.getHid()).isPresent())
             throw new NoSuchElementException("제출 정보가 없습니다.");//예외 발생
@@ -170,6 +201,16 @@ public class ProfessorService {
             throw new NoSuchElementException("출석정보가 비어있습니다.");
         return attendance.get();
     }
+    @Transactional
+    public Attendance updateAttendance(Long aid, AttendanceForm attendanceForm){
+        Optional<Attendance> attendance = attendanceRepository.findByAid(aid);
+        if(!attendance.isPresent())
+            throw new NoSuchElementException("업데이트 하고자 하는 출석정보가 없습니다.");
+        attendance.get().setAttendanceStatus(attendanceForm.getAttendanceStatus());
+        attendanceRepository.save(attendance.get());
+        return attendance.get();
+    }
+    @Transactional
     public void addAttendance(Attendance attendance){
         if(attendance == null)
             throw new NoSuchElementException("해당 출석정보가 없습니다.");
@@ -192,21 +233,22 @@ public class ProfessorService {
             throw new NoSuchElementException("선택한 QA 정보가 없습니다.");
         return qa.get();
     }
-
+    @Transactional
+    public QA updateQA(Long qid, QaForm qaForm) throws  Exception{
+        QA qa = findQA(qid);
+        qa.setQuestion(qaForm.getQuestion());
+        qa.setAnswer(qaForm.getAnswer());
+        qa.setDateTime(LocalDateTime.now());
+        qaRepository.save(qa);
+        return qa;
+    }
     //***튜토링 관련 함수***
     public List<Tutoring> getTutoringList(Professor professor){
         if(professor == null)
             throw new NoSuchElementException("강의를 담당하는 교수님이 없습니다.");
         return professor.getTutoringList();
     }
-    public QA updateQA(Long qid, QaForm qaForm) throws  Exception{
-        QA qa = findQA(qid);
-        qa.setQuestion(qaForm.getQuestion());
-        qa.setAnswer(qa.getAnswer());
-        qa.setDateTime(LocalDateTime.now());
-        qaRepository.save(qa);
-        return qa;
-    }
+    @Transactional
     public Optional<Tutoring> addTutoring(Professor professor,Tutoring tutoring){
         //튜터링 정보 수정 함수
         List<Tutoring> tutorings = professor.getTutoringList();

@@ -27,11 +27,11 @@ public class AssignmentRepository {
         em.createQuery("select a from Assignment a join fetch a.handInList");
     }
     public void save(Assignment assignment){
-        if(assignment.getAid() ==null)
+        if(assignment.getAid() == null)
             em.persist(assignment);
         else
             em.merge(assignment);
-        em.flush();
+
     }
 
     public Optional<Assignment> findByAid(Long aid){

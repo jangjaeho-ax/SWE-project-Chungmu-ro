@@ -26,7 +26,6 @@ public class CourseRepository {
             em.merge(course);
         else
             em.persist(course);
-        em.flush();
     }
 
     public Optional<Course> findByCid(Integer cid){

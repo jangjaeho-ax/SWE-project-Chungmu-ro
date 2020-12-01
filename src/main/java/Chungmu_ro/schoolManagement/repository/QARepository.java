@@ -28,7 +28,6 @@ public class QARepository {
             em.persist(qa);
         else
             em.merge(qa);
-        em.flush();
     }
 
     public Optional<QA> findByQid(Long qid){

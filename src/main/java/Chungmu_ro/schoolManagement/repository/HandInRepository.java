@@ -21,11 +21,10 @@ public class HandInRepository {
         em.createQuery("select h from HandIn h join fetch h.enlist ");
     }
     public void save(HandIn handIn){
-        if(handIn.getHid() ==null)
+        if(handIn.getHid() == null)
             em.persist(handIn);
         else
             em.merge(handIn);
-        em.flush();
     }
 
     public Optional<HandIn> findByHid(Long hid){
