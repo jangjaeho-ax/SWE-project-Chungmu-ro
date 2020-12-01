@@ -9,7 +9,9 @@
     <div th:replace="fragments/bodyHeader :: bodyHeader" />
 
     <div class="jumbotron">
+        <a th:href= "@{/professor/{cid}/room (cid =${course.cid})}">
         <h1 th:text = "${course.courseName}+${course.cid}"/>
+         </a>
         <p class="lead" >성적 수정</p>
     </div>
     <h4>제출 정보</h4>
@@ -18,7 +20,7 @@
         <label class ="label lable-info">성적 입력</label>
         <input type="number" th:field ="${handInForm.score}"
                th:value="${handInForm.score}" min ="0" th:max ="${assignment.perfectScore}" ></input>
-        <input type ="submit">보내기</input>
+        <button type="submit" class="btn btn-primary">Submit</button>
     </form>
     <div th:if="${message}" th:text="${message}" th:class="${'alert ' + alertClass}"/>
     <div th:replace="fragments/footer :: footer" />

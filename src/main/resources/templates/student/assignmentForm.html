@@ -9,14 +9,16 @@
     <div th:replace="fragments/bodyHeader :: bodyHeader" />
 
     <div class="jumbotron">
-        <h1 th:text = "${course.courseName}+${course.cid}"/>
+        <a th:href ="@{/student/{cid}/room (cid =${course.cid})}">
+            <h1 th:text = "${course.courseName}+${course.cid}"/>
+        </a>
         <p class="lead" >제출 파일 수정</p>
     </div>
     <h4>제출 정보</h4>
     <form input th:action ="@{/student/{cid}/{aid}/fileInsert (cid=${course.cid}, aid=${assignment.aid})}" th:method = "post" enctype="multipart/form-data">
         <label class ="label lable-info">제출 파일</label>
         <input type="file" name = "file"></input>
-        <input type ="submit">보내기</input>
+        <button type="submit" class="btn btn-primary">Submit</button>
     </form>
     <div th:if="${message}" th:text="${message}" th:class="${'alert ' + alertClass}"/>
     <div th:replace="fragments/footer :: footer" />

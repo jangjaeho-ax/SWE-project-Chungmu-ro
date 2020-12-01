@@ -8,7 +8,9 @@
 <div class="container">
     <div th:replace="fragments/bodyHeader :: bodyHeader" />
     <div class="jumbotron">
-        <h1 th:text = "${course.courseName}+${course.cid}"/>
+        <a th:href= "@{/professor/{cid}/room (cid =${course.cid})}">
+            <h1 th:text = "${course.courseName}+${course.cid}"/>
+        </a>
         <p class="lead" th:text ="${session.user.pid}"/>
         <p>
             <a class="btn btn-lg btn-secondary" href ="#" th:href="@{/professor/{cid}/assignment
@@ -18,7 +20,7 @@
             <a class="btn btn-lg btn-secondary" href ="#" th:href="@{/professor/{cid}/qa
                 (cid=${course.cid})}">QA</a>
             <a class="btn btn-lg btn-secondary" href ="#" th:href="@{/professor/{cid}/tutoring
-                (cid=${course.cid})}">>튜터링</a>
+                (cid=${course.cid})}">튜터링</a>
         </p>
     </div>
     <div th:if="${message}" th:text="${message}" th:class="${'alert ' + alertClass}"/>

@@ -9,7 +9,9 @@
     <div th:replace="fragments/bodyHeader :: bodyHeader" />
 
     <div class="jumbotron">
+        <a th:href ="@{/student/{cid}/room (cid =${course.cid})}">
         <h1 th:text = "${course.courseName}+${course.cid}"/>
+        </a>
         <p class="lead">출석 페이지</p>
     </div>
     <table class="table table-striped">
@@ -18,7 +20,6 @@
             <th>#</th>
             <th>날짜</th>
             <th>출석 상태</th>
-            <th></th>
         </tr>
         </thead>
         <tbody>
