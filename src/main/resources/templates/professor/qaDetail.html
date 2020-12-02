@@ -38,7 +38,7 @@
     <p>
         <a href="#"  class="btn btn-primary" role="button"
            th:href="@{/professor/{cid}/qa (cid=${course.cid})}">목록</a>
-        <a th:if ="${session.user.pid == qa.professor.pid}" href="#"
+        <a th:if ="${session.user.pid} == ${qa.professor.pid}" href="#"
            th:href="@{/professor/{cid}/{qid}/qaUpdateForm (cid=${course.cid}, qid=${qa.qid})}"
            class="btn btn-primary" role="button">답변 수정</a>
     </p>

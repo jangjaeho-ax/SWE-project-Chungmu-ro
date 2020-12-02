@@ -197,6 +197,7 @@ public class StudentController {
     public String assignmentUpdate(@RequestParam("file") MultipartFile files,Model model, HttpSession session,
                                    @PathVariable("cid") Integer cid, @PathVariable("aid") Long aid,RedirectAttributes redirectAttributes) {
         try {
+
             Course course =studentService.findCourse(cid);
             model.addAttribute("course",course);
             Assignment assignment = studentService.findAssignment(aid);

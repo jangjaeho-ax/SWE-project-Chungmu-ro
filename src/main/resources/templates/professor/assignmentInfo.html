@@ -9,7 +9,7 @@
     <div th:replace="fragments/bodyHeader :: bodyHeader" />
 
     <div class="jumbotron">
-        <a th:href =@{/professor/{cid}/room (cid =${course.cid})}>
+        <a th:href ="@{/professor/{cid}/room (cid = ${course.cid})}">
             <h1 th:text = "${course.courseName}+${course.cid}"/>
         </a>
         <p class="lead" >세부 정보</p>

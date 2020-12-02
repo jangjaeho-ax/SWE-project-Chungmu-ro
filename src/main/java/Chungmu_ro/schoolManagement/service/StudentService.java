@@ -238,7 +238,6 @@ public class StudentService {
     public QA updateQA(Long qid, QaForm qaForm) throws  Exception{
         QA qa = findQA(qid);
         qa.setQuestion(qaForm.getQuestion());
-        qa.setAnswer(qaForm.getAnswer());
         qa.setDateTime(LocalDateTime.now());
         qaRepository.save(qa);
         return qa;
